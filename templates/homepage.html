@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    {#TODO ADD IF USER LOGGED IN#}
+    {#TODO ADD PROJECTS INSIDE TABLE#}
+    {% for project in projects %}
+        Projeto : {{ project.pk }} <br>
+        Nome : {{ project.name }} <br>
+        Date : {{ project.start_date }} <br>
+    {% endfor %}
+
+{% endblock body %}
