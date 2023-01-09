@@ -65,7 +65,8 @@ class Project(models.Model):
     is_external = models.BooleanField()
     is_rd = models.CharField(
         verbose_name="Is it research and development project ?",
-        max_length=1
+        max_length=1,
+        choices=RD_CHOICES
     )
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
@@ -74,7 +75,7 @@ class Project(models.Model):
         choices = STATUS_CHOICES,
         default= '1'
     )
-    group_id = models.IntegerField(null=True)
+    #group_id = models.IntegerField(null=True)
     payment = models.CharField(
         max_length=1,
         choices= PAYMENT_CHOICES

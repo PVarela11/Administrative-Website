@@ -43,7 +43,11 @@
                     <li><a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400" href="#">Home</a></li>
                     <li><a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400" href="#">Time Report</a></li>
                     <li><a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400" href="#">Users</a></li>
-                    <li><a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400 lg:mb-0 mb-2" href="#"><i class="fa-solid fa-right-to-bracket"></i> Login</a></li>
+                    {% if request.user.is_authenticated %}
+                        <li><a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400 lg:mb-0 mb-2" href="{% url 'account_logout' %}"><i class="fa-solid fa-right-to-bracket"></i> Logout</a></li>
+                    {% else %}
+                        <li><a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400 lg:mb-0 mb-2" href="{% url 'account_login' %}"><i class="fa-solid fa-right-to-bracket"></i> Login</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         </div>
