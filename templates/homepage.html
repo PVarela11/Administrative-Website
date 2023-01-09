@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
-
+{% load static %}
+<script src="{% static 'js/main.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 {% block body %}
 
+    <p>Logged in as: {{request.user}}</p>
+    <button onclick="myFunction()">Click me!</button>
     <!-- component https://tailwindcomponents.com/component/multi-line-table -->
     <div class="overflow-hidden rounded-lg border border-gray-200 shadow-md m-5">
         <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
@@ -17,7 +21,7 @@
             </thead>
             <tbody class="divide-y divide-gray-100 border-t border-gray-100">
                 {% for project in projects %}
-                    <tr class="hover:bg-gray-50">
+                    <tr class="hover:bg-gray-50" data-href="{% url 'projects:detail' project.pk %}">
                         <th class="px-6 py-4 font-normal">
                             <div class="text-sm">
                                 <div class="font-medium text-gray-700">{{project.name}}</div>
