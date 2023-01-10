@@ -42,7 +42,7 @@ PAYMENT_DAYS_CHOICES = (
     ("3", "60 Days"),
     ("4", "120 Days"),
 )
-#TODO TRANSLATE TO ENGLISH#
+#TODO: TRANSLATE TO ENGLISH#
 TYPE_VAT_CHOICES = (
     ("1", "Intermédio (13%)"),
     ("2", "Isento de IVA"),
@@ -55,7 +55,7 @@ class Project(models.Model):
     code1 = models.CharField(max_length=5, default="MCAAL")
     code2 = models.CharField(max_length=4, default="EAS1")
     name = models.CharField(max_length=240)
-    #TODO MANAGER SHOULD BE USER#
+    #TODO: MANAGER SHOULD BE USER#
     manager = models.CharField(max_length=240)
     description = models.TextField(null=True)
     type = models.CharField(

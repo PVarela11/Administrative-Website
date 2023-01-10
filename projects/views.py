@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView, UpdateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import EditProjectForm
@@ -18,8 +18,8 @@ class HomePage(LoginRequiredMixin, ListView):
     context_object_name = "projects"
     queryset = Project.objects.all().order_by('-id')[0:10]
 
-class ProjectDetailView(FormView):
-    http_method_names=["get"]
+class ProjectDetailView(UpdateView):
+    http_method_names=["get", "post"]
     model = Project
     template_name = "project/detail.html"
     form_class = EditProjectForm

@@ -1,3 +1,11 @@
 tr[data-href] {
     cursor: pointer;
 }
+
+.asteriskField {
+    display: none;
+}
+
+.textinput{
+    background-color: blue;
+}
