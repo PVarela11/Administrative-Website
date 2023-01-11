@@ -3,6 +3,15 @@
 
     <p>Logged in as: {{request.user}}</p>
     <button onclick="myFunction()">Click me!</button>
+
+    <div class="flex items-baseline mx-6">
+        <h1 class="">Projects List</h1>
+        <!-- component https://tailwindcomponents.com/component/button-component-default-->
+        <button type="button" class="text-sm border border-indigo-500 bg-indigo-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-indigo-600 focus:outline-none focus:shadow-outline">
+            Add project
+        </button>
+    </div>
+
     <!-- component https://tailwindcomponents.com/component/multi-line-table -->
     <div class="overflow-hidden rounded-lg border border-gray-200 shadow-md m-5">
         <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
@@ -76,7 +85,7 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex justify-end gap-4">
-                                <a x-data="{ tooltip: 'Delete' }" href="www.apple.com">
+                                <a x-data="{ tooltip: 'Delete' }" href="{% url 'projects:delete' project.pk %}">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                         stroke="currentColor" class="h-6 w-6" x-tooltip="tooltip">
                                         <path stroke-linecap="round" stroke-linejoin="round"
