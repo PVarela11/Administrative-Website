@@ -1,12 +1,11 @@
 from django.shortcuts import render
 
-from django.views.generic import ListView, UpdateView, FormView, DeleteView
+from django.views.generic import ListView, DetailView, UpdateView, FormView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 
 from .forms import EditProjectForm
 from .models import Project
-
 
 # Create your views here.
 class HomePage(LoginRequiredMixin, ListView):

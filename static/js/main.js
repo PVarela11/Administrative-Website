@@ -84,3 +84,10 @@ $(document).ready(function () {
     });
 });
 
+//Modal
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('open-modal-btn').addEventListener('click', function() {
+      document.querySelector('.modal').style.display = 'block';
+    });
+  });
+  
