@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,7 +12,7 @@ from .models import Project
 class HomePage(LoginRequiredMixin, ListView):
     login_url = 'account_login'
     redirect_field_name = 'account_login'
-    paginate_by = 2
+    paginate_by = 5
     http_method_names=["get", "post"]
     template_name = "homepage.html"
     model = Project
@@ -37,4 +38,5 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
     model = Project
     form_class = ProjectCreateForm
     template_name = 'project/create.html'
+    success_url = '/'
     

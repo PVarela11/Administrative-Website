@@ -1,9 +1,50 @@
 <h2>Create Project</h2>
+
 <form method="POST" action="{% url 'projects:create' %}">
   {% csrf_token %}
-  {{ form.as_p }}
-  <input type="submit" value="Create">
+  <div class="form-section" id="section1">
+    <h3>Section 1</h3>
+    <p>{{ form.code1.label_tag }} {{ form.code1 }}</p>
+    <p>{{ form.code2.label_tag }} {{ form.code2 }}</p>
+    <p>{{ form.name.label_tag }} {{ form.name }}</p>
+    <p>{{ form.manager.label_tag }} {{ form.manager }}</p>
+    <p>{{ form.description.label_tag }} {{ form.description }}</p>
+    <p>{{ form.type.label_tag }} {{ form.type }}</p>
+    <p>{{ form.is_external.label_tag }} {{ form.is_external }}</p>
+    <p>{{ form.is_rd.label_tag }} {{ form.is_rd }}</p>
+    <p>{{ form.start_date.label_tag }} {{ form.start_date }}</p>
+    <p>{{ form.end_date.label_tag }} {{ form.end_date }}</p>
+  </div>
+
+  <div class="form-section" id="section2" style="display: none;">
+    <h3>Section 2</h3>
+    <p>{{ form.status.label_tag }} {{ form.status }}</p>
+    <p>{{ form.payment.label_tag }} {{ form.payment }}</p>
+    <p>{{ form.visibility.label_tag }} {{ form.visibility }}</p>
+    <p>{{ form.travel_time.label_tag }} {{ form.travel_time }}</p>
+    <p>{{ form.long_time.label_tag }} {{ form.long_time }}</p>
+    <p>{{ form.extra_time.label_tag }} {{ form.extra_time }}</p>
+    <p>{{ form.weekend_time.label_tag }} {{ form.weekend_time }}</p>
+    <p>{{ form.night_time.label_tag }} {{ form.night_time }}</p>
+  </div>
+
+  <!-- Add more sections here -->
+  <button type="button" id="prevBtn" style="display:none;">Previous</button>
+  <button type="button" id="nextBtn">Next</button>
+  <button type="button" id="closeModalBtn">Close</button>
+
+  <!-- The submit button will be shown on the last section -->
+  <input type="submit" value="Create" style="display: none;">
 </form>
+
+
+<!--<form method="POST" action="{% url 'projects:create' %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="button" id="closeModalBtn">Close</button>
+  <input type="submit" value="Create">
+</form>-->
+
 
 <!--<form hx-post="{{ request.path }}" class="modal-content">
     {% csrf_token %}
