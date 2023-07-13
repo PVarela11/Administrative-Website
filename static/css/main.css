@@ -12,4 +12,46 @@ tr[data-href] {
 
 .modal {
     display: none;
+    position:fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
   }
+
+  .modalContent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    width: 500px; /* Adjust the width as needed */
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+/* Modal overlay *//*
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+  }
+  
+  /* Modal content *//*
+  .modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    width: 500px; /* Adjust the width as needed */
+    /*padding: 20px;
+    border-radius: 8px;
+  }
+  

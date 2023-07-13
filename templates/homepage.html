@@ -1,20 +1,27 @@
 {% extends 'base.html' %}
-{% include 'project/modal.html' %}
+{% load crispy_forms_tags %}
 {% block body %}
 
+    <!--Hidden values to be accessed inside javascript-->
+    <input type="hidden" id="createUrl" data-url="{% url 'projects:create'%}" />
+
     <p>Logged in as: {{request.user}}</p>
-    <button onclick="myFunction()">Click me!</button>
+    <!--<button onclick="myFunction()">Click me!</button>-->
 
     <div class="flex items-baseline mx-6">
         <h1 class="">Projects List</h1>
-        <!-- component https://tailwindcomponents.com/component/button-component-default-->
-        <button type="button" id="open-modal-btn" class="text-sm border border-indigo-500 bg-indigo-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-indigo-600 focus:outline-none focus:shadow-outline">
+        <!-- component https://tailwindcomponents.com/component/button-component-default    id="open-modal-btn"-->
+        <button type="button" id="openModalBtn"  class="text-sm border border-indigo-500 bg-indigo-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-indigo-600 focus:outline-none focus:shadow-outline">
             Add project
         </button>
     </div>
 
-    <div id="modal-container"></div>
-
+    <div id="myModal" class="modal">
+        <div class="modalContent">
+            <div id="modalFormContainer"></div>
+        </div>
+    </div>
+    
     <!-- component https://tailwindcomponents.com/component/multi-line-table -->
     <div class="overflow-hidden rounded-lg border border-gray-200 shadow-md m-5">
         <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">

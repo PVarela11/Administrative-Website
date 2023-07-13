@@ -1,93 +1,61 @@
-/*
-$.ajaxSetup({
-    beforeSend: function beforeSend(xhr, settings) {
-        function getCookie(name) {
-            let cookieValue = null;
+$(document).ready(function() {
+    const modal = document.getElementById("myModal");
+    const openModalBtn = document.getElementById("openModalBtn");
+    const modalFormContainer = document.getElementById("modalFormContainer");
+    const url = $("#createUrl").attr("data-url");
 
+    openModalBtn.addEventListener("click", function() {
+        fetchFormHtml(url);
+    });
 
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-
-                for (let i = 0; i < cookies.length; i += 1) {
-                    const cookie = jQuery.trim(cookies[i]);
-
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) === (`${name}=`)) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-
-            return cookieValue;
-        }
-
-        //if (!(/^http:.*///.test(settings.url) || /^https:.*/.test(settings.url))) {
-            // Only send the token to relative URLs i.e. locally.
-            /*xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
-        }
-    },
-});
-
-
-$(document).on("click", ".js-toggle-modal", function(e) {
-    e.preventDefault()
-    $(".js-modal").toggleClass("hidden")
-})
-.on("click", ".js-submit", function(e) {
-    e.preventDefault()
-    const text = $(".js-post-text").val().trim()
-    const $btn = $(this)
-
-    if(!text.length) {
-        return false
+    // Fetch the form HTML using AJAX
+    function fetchFormHtml(url) {
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                modalFormContainer.innerHTML = html;
+                modal.style.display = "block";
+            });
     }
 
-    $btn.prop("disabled", true).text("Posting!")
-    $.ajax({
-        type: 'POST',
-        url: $(".js-post-text").data("post-url"),
-        data: {
-            text: text
-        },
-        success: (dataHtml) => {
-            $(".js-modal").addClass("hidden");
-            $("#posts-container").prepend(dataHtml);
-            $btn.prop("disabled", false).text("New Post");
-            $(".js-post-text").val('')
-        },
-        error: (error) => {
-            console.warn(error)
-            $btn.prop("disabled", false).text("Error");
+    // Close the modal when the user clicks outside of it
+    $(window).click(function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
         }
     });
-})*/
+});
 
-console.log("HELLO WORLD")
-function myFunction() {
-    alert("Hello from a static file!");
-  }
-
-/*document.addEventListener("DOMContentLoaded", () => {
-    const rows = document.querySelectorAll("tr[data-href]");
+//Modal Code
+/*document.addEventListener("DOMContentLoaded", function() {
+    const modal = document.getElementById("myModal");
+    const openModalBtn = document.getElementById("openModalBtn");
+    const modalFormContainer = document.getElementById("modalFormContainer");
+    var url = $("#createUrl").attr("data-url")
     
-    rows.forEach(row => {
-        row.addEventListener("click", () => {
-            window.location.href = row.dataset.href;
-        })
-    })
-})*/
+    openModalBtn.addEventListener("click", function() {
+        // Fetch the form HTML using AJAX
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                modalFormContainer.innerHTML = html;
+                modal.style.display = "block";
+            });
+    });
 
+    // Close the modal when the user clicks outside of it
+    window.addEventListener("click", function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    });
+});*/
+
+
+
+//Table Row Click Code
 $(document).ready(function () {
     $(document.body).on("click", "tr[data-href]", function () {
         window.location.href = this.dataset.href;
     });
 });
-
-//Modal
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('open-modal-btn').addEventListener('click', function() {
-      document.querySelector('.modal').style.display = 'block';
-    });
-  });
-  
