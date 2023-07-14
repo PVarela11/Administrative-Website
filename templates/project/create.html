@@ -1,9 +1,7 @@
-<h2>Create Project</h2>
-
-<form method="POST" action="{% url 'projects:create' %}">
+<form method="POST" action="{% url 'projects:create' %}" novalidate>
   {% csrf_token %}
   <div class="form-section" id="section1">
-    <h3>Section 1</h3>
+    <h3>Project Data</h3></br>
     <p>{{ form.code1.label_tag }} {{ form.code1 }}</p>
     <p>{{ form.code2.label_tag }} {{ form.code2 }}</p>
     <p>{{ form.name.label_tag }} {{ form.name }}</p>
@@ -36,26 +34,3 @@
   <!-- The submit button will be shown on the last section -->
   <input type="submit" value="Create" style="display: none;">
 </form>
-
-
-<!--<form method="POST" action="{% url 'projects:create' %}">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="button" id="closeModalBtn">Close</button>
-  <input type="submit" value="Create">
-</form>-->
-
-
-<!--<form hx-post="{{ request.path }}" class="modal-content">
-    {% csrf_token %}
-    <div class="modal-header">
-      <h5 class="modal-title">Add Project</h5>
-    </div>
-    <div class="modal-body">
-      {{ form.as_p }}
-    </div>
-    <div class="modal-footer">
-      <button type="button" data-bs-dismiss="modal">Cancel</button>
-      <button type="submit">Save</button>
-    </div>
-</form>-->

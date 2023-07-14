@@ -27,3 +27,9 @@ class ProjectCreateForm(ModelForm):
     class Meta:
         model = Project
         fields = '__all__'
+        error_messages = {
+            'name': {
+                'required': "Please enter a name for the project.",
+                'max_length': "The project name must be no more than 240 characters.",
+            },
+        }

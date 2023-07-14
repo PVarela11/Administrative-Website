@@ -53,7 +53,6 @@ $(document).ready(function() {
                     // Hide the submit button if it was shown
                     submitBtn.style.display = "none";
                 });
-
                 nextBtn.addEventListener("click", function() {
                     // Hide the current section
                     sections[currentSection].style.display = "none";
@@ -72,22 +71,41 @@ $(document).ready(function() {
                         submitBtn.style.display = "inline-block";
                     }
                 });
-                
+
+                const form = document.querySelector("form");
+                form.addEventListener("submit", function(event) {
+                    // Get all the required form fields
+                    let requiredFields = document.querySelectorAll('[required]');
+
+                    // Keep track of the fields that are not filled
+                    let unfilledFields = [];
+                    
+                    // Check if all the required fields are filled
+                    requiredFields.forEach(function(field) {
+                        if (!field.value) {
+                            unfilledFields.push(field.name);
+                            field.classList.add("error");
+                        }else{
+                            field.classList.remove("error");
+                        }
+                    });
+
+                    // If there are any unfilled fields, display an alert and prevent form submission
+                    if (unfilledFields.length > 0) {
+                        event.preventDefault();
+                        alert('Please fill in the following fields:\n-' + unfilledFields.join('\n- '));
+                    }
+
+                });
             });
     }
 
     // Close the modal when the user clicks outside of it
-    $(window).click(function(event) {
+    /*$(window).click(function(event) {
         if (event.target == modal) {
             closeModal();
         }
-    });
-
-    //Close the modal when the user clicks on cancel
-    cancelBtn.addEventListener("click", function() {
-        closeModal();
-    });
-
+    });*/
 
     function openModal() {
         modal.style.display = "block";
