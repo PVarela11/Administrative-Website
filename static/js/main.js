@@ -74,6 +74,10 @@ $(document).ready(function() {
 
                 const form = document.querySelector("form");
                 form.addEventListener("submit", function(event) {
+                    // Get the date fields
+                    let startDateField = document.querySelector('#id_start_date');
+                    let endDateField = document.querySelector('#id_end_date');
+
                     // Get all the required form fields
                     let requiredFields = document.querySelectorAll('[required]');
 
@@ -94,6 +98,13 @@ $(document).ready(function() {
                     if (unfilledFields.length > 0) {
                         event.preventDefault();
                         alert('Please fill in the following fields:\n-' + unfilledFields.join('\n- '));
+                    }else {
+                        // Check if the date fields contain valid dates
+                        if (!isValidDate(startDateField.value) || !isValidDate(endDateField.value)) {
+                            // If the dates are not valid, display an error message and prevent form submission
+                            event.preventDefault();
+                            alert('Please enter valid dates in the format YYYY-MM-DD');
+                    }
                     }
 
                 });
@@ -112,6 +123,39 @@ $(document).ready(function() {
     }
     function closeModal() {
         modal.style.display = "none";
+    }
+
+    function isValidDate(dateString) {
+        // Check if the date string matches the format YYYY-MM-DD
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+            return false;
+        }
+    
+        // Parse the date parts to integers
+        let parts = dateString.split('-');
+        let year = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10);
+        let day = parseInt(parts[2], 10);
+    
+        // Check if the date is valid
+        if (month < 1 || month > 12) {
+            return false;
+        }
+        if (day < 1 || day > 31) {
+            return false;
+        }
+        if ((month === 4 || month === 6 || month === 9 || month === 11) && day === 31) {
+            return false;
+        }
+        if (month === 2) {
+            let isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+            if (day > 29 || (day === 29 && !isLeapYear)) {
+                return false;
+            }
+        }
+    
+        // The date is valid
+        return true;
     }
 });
 
