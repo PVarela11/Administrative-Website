@@ -1,7 +1,10 @@
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+
+from django.urls import reverse_lazy
 from django.shortcuts import render
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -34,9 +37,24 @@ class ProjectDeleteView(LoginRequiredMixin, DeleteView):
     model = Project
     success_url = "/"
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Project was eliminated successfully')
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['delete_url'] = reverse('projects:delete', args=[self.object.pk])
+        return context
+
 class ProjectCreateView(LoginRequiredMixin, CreateView):
     model = Project
     form_class = ProjectCreateForm
     template_name = 'project/create.html'
     success_url = '/'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Project "{form.instance.name}" was created successfully!')
+        return response
     

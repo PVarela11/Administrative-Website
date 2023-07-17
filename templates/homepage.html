@@ -22,6 +22,15 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Modal -->
+    <div id="deleteModal" class="modal">
+        <!-- Your code to display the delete view goes here -->
+        <div class="modalContent">
+            <div id="modalFormContainer">
+            </div>
+        </div>
+    </div>
     
     <!-- component https://tailwindcomponents.com/component/multi-line-table -->
     <div class="overflow-hidden rounded-lg border border-gray-200 shadow-md m-5">
@@ -100,7 +109,7 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex justify-end gap-4">
-                                <a x-data="{ tooltip: 'Delete' }" href="{% url 'projects:delete' project.pk %}">
+                                <a x-data="{ tooltip: 'Delete' }" id="deleteModalBtn" data-url="{% url 'projects:delete' project.pk %}">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                         stroke="currentColor" class="h-6 w-6" x-tooltip="tooltip">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -121,6 +130,7 @@
             </tbody>
         </table>
     </div>
+
     <div class="pagination">
         <span class="step-links">
             {% if page_obj.has_previous %}
