@@ -13,26 +13,36 @@ from .models import Project
 
 # Create your views here.
 class HomePage(LoginRequiredMixin, ListView):
+    http_method_names=["get", "post"]
     login_url = 'account_login'
     redirect_field_name = 'account_login'
     paginate_by = 5
-    http_method_names=["get", "post"]
     template_name = "homepage.html"
     model = Project
-    #form = CreateProjectForm()
-    #form_class = CreateProjectForm
     context_object_name = "projects"
     queryset = Project.objects.all().order_by('-id')[0:10]
 
 class ProjectDetailView(LoginRequiredMixin, UpdateView):
     http_method_names=["get", "post"]
     model = Project
-    template_name = "project/detail.html"
+    template_name = "project/edit.html"
     form_class = ProjectEditForm
     success_url = "/"
+    
+    def form_valid(self, form):
+        # Check the form errors
+        if form.errors:
+            print("The form has errors:", form.errors)
+            messages.error(self.request, f'There was an error with the  "{form.instance.name}" !')
+            return super().form_valid(form)
+
+        # The form is valid, so save it and redirect the user
+        response = super().form_valid(form)
+        self.object = form.save()
+        messages.success(self.request, f'Project "{form.instance.name}" was updated successfully!')
+        return response
 
 class ProjectDeleteView(LoginRequiredMixin, DeleteView):
-    #http_method_names= ["get"]
     template_name = "project/delete.html"
     model = Project
     success_url = "/"

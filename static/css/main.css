@@ -17,6 +17,7 @@ input[type=text]:focus {
     border: 3px solid #555;
 }*/
 
+/*Alert*/
 @layer components {
     .alert {
         position: fixed;
@@ -32,6 +33,7 @@ input[type=text]:focus {
     }
   }
 
+/*Form*/
 .error {
     border: 3px solid red;
 }
@@ -44,6 +46,7 @@ input[type=text]:focus {
     background-color: red;
 }
 
+/*PopUp*/
 .modal {
     display: none;
     position:fixed;

@@ -1,0 +1,136 @@
+<h1>Update Project</h1>
+
+<form action="{% url 'projects:edit' project.pk %}" method="post">
+  {% csrf_token %}
+
+  <div class="form-section" id="section1">
+    <div class="form-group">
+        <label for="code1">Code 1</label>
+        <input type="text" class="form-control" id="code1" name="code1" value="{{ project.code1 }}">
+      </div>
+    
+      <div class="form-group">
+        <label for="code2">Code 2</label>
+        <input type="text" class="form-control" id="code2" name="code2" value="{{ project.code2 }}">
+      </div>
+    
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ project.name }}">
+      </div>
+    
+      <div class="form-group">
+        <label for="manager">Manager</label>
+        <input type="text" class="form-control" id="manager" name="manager" value="{{ project.manager }}">
+      </div>
+    
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea class="form-control" id="description" name="description">{{ project.description }}</textarea>
+      </div>
+    
+      <div class="form-group">
+        <label for="type">Type</label>
+        <select class="form-control" id="type" name="type">
+          <option value="1">External project</option>
+          <option value="2">Commencement driver assignment</option>
+          <option value="3">Current accoutn</option>
+          <option value="4">Internal project</option>
+          <option value="5">Internal assignment</option>
+          <option value="6">Master thesis</option>
+          <option value="7">Service Ongoing</option>
+          <option value="8">Short-term leave of absence skills development</option>
+        </select>
+      </div>
+    
+      <div class="form-group">
+        <label for="is_external">Is External</label>
+        {% if project.is_external %}
+          <input type="checkbox" class="form-control" id="is_external" name="is_external" checked>
+        {% else %}
+          <input type="checkbox" class="form-control" id="is_external" name="is_external">
+        {% endif %}
+      </div>
+    
+      <div class="form-group">
+        <label for="is_rd">Is it research and development project ?</label>
+        <select class="form-control" id="is_rd" name="is_rd">
+            <option value="1">Not</option>
+            <option value="2">Research</option>
+            <option value="3">Development</option>
+        </select>
+      </div>
+    
+      <div class="form-group">
+        <label for="start_date">Start Date</label>
+        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ project.start_date|date:'Y-m-d' }}">
+      </div>
+    
+      <div class="form-group">
+        <label for="end_date">End Date</label>
+        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ project.end_date|date:'Y-m-d' }}">
+      </div>
+  </div>
+  <div class="form-section" id="section2">
+    <div class="form-group">
+        <label for="status">Status</label>
+        <select class="form-control" id="status" name="status">
+          <option value="1">Not started</option>
+          <option value="2">Ongoing</option>
+          <option value="3">Completed</option>
+        </select>
+      </div>
+    
+      <div class="form-group">
+        <label for="payment">Payment</label>
+        <select class="form-control" id="payment" name="payment">
+          <option value="1">Current account</option>
+          <option value="2">Fixed cost 30</option>
+          <option value="3">Fixed cost 50</option>
+          <option value="4">Fixed cost 100</option>
+          <option value="5">Not billable</option>
+        </select>
+      </div>
+    
+      <div class="form-group">
+        <label for="visibility">Visibility</label>
+        <select class="form-control" id="visibility" name="visibility">
+          <option value="1">Visible only to the member of the project</option>
+          <option value="2">Visible to everyone</option>
+        </select>
+      </div>
+    
+      <div class="form-group">
+        <label for="travel_time">Travel Time</label>
+        <input type="number" class="form-control" id="travel_time" name="travel_time" value="{{ project.travel_time }}">
+      </div>
+    
+      <div class="form-group">
+        <label for="long_time">Long Time</label>
+        <input type="number" class="form-control" id="long_time" name="long_time" value="{{ project.long_time }}">
+      </div>
+    
+      <div class="form-group">
+        <label for="extra_time">Extra Time</label>
+        <input type="number" class="form-control" id="extra_time" name="extra_time" value="{{ project.extra_time }}">
+      </div>
+    
+      <div class="form-group">
+        <label for="weekend_time">Weekend Time</label>
+        <input type="number" class="form-control" id="weekend_time" name="weekend_time" value="{{ project.weekend_time }}">
+      </div>
+    
+      <div class="form-group">
+        <label for="night_time">Night Time</label>
+        <input type="number" class="form-control" id="night_time" name="night_time" value="{{ project.night_time }}">
+      </div>
+  </div>
+  
+
+  <!--Buttons-->
+  <button type="button" id="prevBtn" style="display:none;">Previous</button>
+  <button type="button" id="nextBtn">Next</button>
+  <button type="button" id="closeModalBtn">Cancel</button>
+  <input type="submit" value="Update" style="display: none;">
+
+</form>
