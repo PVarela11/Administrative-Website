@@ -2,9 +2,6 @@ $(document).ready(function() {
     const modal = document.getElementById("myModal");
     const openModalBtn = document.getElementById("openModalBtn");
     
-    const deleteModalBtn = document.getElementById("deleteModalBtn");
-    const deleteUrl = deleteModalBtn.getAttribute("data-url");
-
     const editModalBtn = document.getElementById("editModalBtn");
     const editUrl = editModalBtn.getAttribute("data-url");
 
@@ -33,11 +30,19 @@ $(document).ready(function() {
         fetchFormHtml(createUrl);
         currentSection=0;
     });
-    deleteModalBtn.addEventListener("click", function() {
+    let deleteBtns = document.querySelectorAll('a.deleteBtn');
+    deleteBtns.forEach(function(deleteBtn) {
+    deleteBtn.addEventListener('click', function(event) {
+        //Prevent triggering tr click event
+        event.preventDefault();
+        event.stopPropagation();
+        // rest of your code here
+        let deleteUrl = this.getAttribute('data-url');
         action = "delete";
         console.log(deleteUrl)
-        //event.preventDefault();
+        event.preventDefault();
         fetchFormHtml(deleteUrl);
+        });
     });
     $(document.body).on("click", "tr[data-href]", function () {
         //window.location.href = this.dataset.href;
