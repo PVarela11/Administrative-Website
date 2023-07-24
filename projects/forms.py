@@ -7,21 +7,15 @@ from crispy_forms.layout import Submit
 from django.urls import reverse
 
 class ProjectEditForm(ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_id = 'id-exampleForm'
-        self.helper.form_class = 'blueForms'
-        #self.helper.form_method = 'post'
-        #self.helper.form_action = 'submit_survey'
-
-        #self.helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
-        #self.form.helper.form_action = reverse('')
+    def clean(self):
+        cleaned_data = super().clean()
+        # Add your custom validation code here
+        return cleaned_data
 
     class Meta:
         model = Project
         fields = '__all__'
+        
 
 class ProjectCreateForm(ModelForm):
     class Meta:

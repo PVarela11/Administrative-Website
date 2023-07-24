@@ -1,11 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+from django.db import IntegrityError
+from django.template.loader import render_to_string
+
 
 from django.urls import reverse_lazy
 from django.shortcuts import render
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,JsonResponse
 from django.urls import reverse
 
 from .forms import ProjectEditForm, ProjectCreateForm
@@ -30,18 +33,33 @@ class ProjectDetailView(LoginRequiredMixin, UpdateView):
     success_url = "/"
     
     def form_valid(self, form):
-        # Check the form errors
-        if form.errors:
-            print("The form has errors:", form.errors)
-            messages.error(self.request, f'There was an error with the  "{form.instance.name}" !')
-            return super().form_valid(form)
-
-        # The form is valid, so save it and redirect the user
-        response = super().form_valid(form)
-        self.object = form.save()
+        print(self)
+        print("Sucessfull FORM")
+        # Save the data to the database
+        form.save()
+        # Return a success response
         messages.success(self.request, f'Project "{form.instance.name}" was updated successfully!')
-        return response
+        # Return a success response with the success URL
+        return JsonResponse({'success': True, 'success_url': self.success_url})
+    
+    def form_invalid(self, form):
+        print("Unsucessfull FORM")
+        # Return the form's errors as a JSON response
+        return JsonResponse({'errors': form.errors})
 
+class ProjectCreateView(LoginRequiredMixin, CreateView):
+    model = Project
+    form_class = ProjectCreateForm
+    template_name = 'project/create.html'
+    success_url = '/'
+    
+    def form_valid(self, form):
+        try:
+            return super().form_valid(form)
+        except IntegrityError:
+            form.add_error(None, 'Error: Code already exists')
+            return self.form_invalid(form)
+    
 class ProjectDeleteView(LoginRequiredMixin, DeleteView):
     template_name = "project/delete.html"
     model = Project

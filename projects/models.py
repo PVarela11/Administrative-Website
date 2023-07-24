@@ -1,9 +1,10 @@
 from django.db import models
+from django.db.models import UniqueConstraint
 
 STATUS_CHOICES = (
     ("1", "Not started"),
     ("2", "Ongoing"),
-    ("3", "Completed"),
+    ("3", "Complete"),
 )
 
 TYPE_PROJECT_CHOICES = (
@@ -52,9 +53,9 @@ TYPE_VAT_CHOICES = (
 )
 # Create your models here.
 class Project(models.Model):
-    code1 = models.CharField(max_length=5, default="MCAAL")
-    code2 = models.CharField(max_length=4, default="EAS1")
-    name = models.CharField(max_length=240)
+    code1 = models.CharField(max_length=5)
+    code2 = models.CharField(max_length=4)
+    name = models.CharField(max_length=120, unique=True)
     #TODO: MANAGER SHOULD BE USER#
     manager = models.CharField(max_length=240)
     description = models.TextField(null=True)
@@ -75,7 +76,6 @@ class Project(models.Model):
         choices = STATUS_CHOICES,
         default= '1'
     )
-    #group_id = models.IntegerField(null=True)
     payment = models.CharField(
         max_length=1,
         choices= PAYMENT_CHOICES
@@ -89,15 +89,12 @@ class Project(models.Model):
     extra_time = models.IntegerField(default=200)
     weekend_time = models.IntegerField(default=20)
     night_time = models.IntegerField(default=40)
-    #client = models.ForeignKey(
-    #    Client,
-    #    on_delete= models.CASCADE
-    #)
-
-    @property
-    def name_dosage(self):
-        return "%s - %s" % ( self.code1, self.code2)
-
+    
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['code1', 'code2'], name='unique_code')
+        ]
+        
     def __str__(self):
         return self.name
     
