@@ -3,22 +3,19 @@ $(document).ready(function() {
     const openModalBtn = document.getElementById("openModalBtn");
 
     //Dynamic variables
-    let closeModalBtn = null;
-    let prevBtn = null;
-    let nextBtn = null;
-    let sections = null;
-    let submitBtn = null;
-    let form = null;
+    let prevBtn;
+    let nextBtn;
+    let sections;
+    let submitBtn;
+    let form;
+    let startDateField;
+    let endDateField;
+    let action;
+    let currentSection = 0;
 
     const modalFormContainer = document.getElementById("modalFormContainer");
     const createUrl = $("#createUrl").attr("data-url");
-    let currentSection = 0;
-    let action = "";
-
-    //Alert code:
-    setTimeout(function() {
-        document.querySelector('.alert').classList.add('hide');
-    }, 3000);
+    let deleteBtns = document.querySelectorAll('a.deleteBtn');
 
     //Listeners
     openModalBtn.addEventListener("click", function() {
@@ -26,13 +23,12 @@ $(document).ready(function() {
         fetchFormHtml(createUrl);
         currentSection=0;
     });
-    let deleteBtns = document.querySelectorAll('a.deleteBtn');
+
     deleteBtns.forEach(function(deleteBtn) {
     deleteBtn.addEventListener('click', function(event) {
         //Prevent triggering tr click event
         event.preventDefault();
         event.stopPropagation();
-        // rest of your code here
         let deleteUrl = this.getAttribute('data-url');
         action = "delete";
         console.log(deleteUrl)
@@ -40,6 +36,7 @@ $(document).ready(function() {
         fetchFormHtml(deleteUrl);
         });
     });
+    //Click on the table rows opens modal to edit the project
     $(document.body).on("click", "tr[data-href]", function () {
         //window.location.href = this.dataset.href;
         action = "edit";
@@ -59,293 +56,175 @@ $(document).ready(function() {
             });
     }
 
-    function updateModalContent(html) {
-        // Update the content of the modal with the new HTML
-        modalFormContainer.innerHTML = html;
-        // Initialize the updated form
-        initializeForm();
-        
-    }
-
     function initializeForm(){
-        const deleteCloseModalBtn = document.getElementById("closeModalBtn");
-        deleteCloseModalBtn.addEventListener("click", function() {
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        closeModalBtn.addEventListener("click", function() {
             closeModal();
         });
         submitBtn = document.querySelector("input[type='submit']");
-        prevBtn = document.getElementById("prevBtn");
-        nextBtn = document.getElementById("nextBtn");
-        sections = document.querySelectorAll(".form-section");
-        // Show the first section
-        sections[currentSection].style.display = "block";
-        // Hide the "Previous" button on the first section
-        prevBtn.style.display = "none";
-        prevBtn.addEventListener("click", function() {
-            //console.log(currentSection);
-            // Hide the current section
-            sections[currentSection].style.display = "none";
-            // Decrement the current section index
-            currentSection--;
-            // Show the previous section
+        if(action!="delete"){
+            prevBtn = document.getElementById("prevBtn");
+            nextBtn = document.getElementById("nextBtn");
+            sections = document.querySelectorAll(".form-section");
+            // Show the first section
             sections[currentSection].style.display = "block";
-
             // Hide the "Previous" button on the first section
-            if (currentSection === 0) {
-                prevBtn.style.display = "none";
-            }
-
-            // Show the "Next" button if it was hidden
-            nextBtn.style.display = "inline-block";
-
-            // Hide the submit button if it was shown
-            submitBtn.style.display = "none";
-        });
-        nextBtn.addEventListener("click", function() {
-            // Hide the current section
-            sections[currentSection].style.display = "none";
-            // Increment the current section index
-            currentSection++;
-            // Show the next section
-            sections[currentSection].style.display = "block";
-
-            // Show the "Previous" button if it was hidden
-            prevBtn.style.display = "inline-block";
-
-            // Hide the "Next" button on the last section
-            if (currentSection === sections.length - 1) {
-                nextBtn.style.display = "none";
-                // Show the submit button on the last section
-                submitBtn.style.display = "inline-block";
-            }
-        });
-        form = document.querySelector("form");
-        console.log(form);
-        switch(action){
-            case "edit":
-                console.log("Edit");
-                form.addEventListener("submit", function(event) {
-                    event.preventDefault();
-                    console.log("edit submit");
-                    // Keep track of the fields that are not filled
-                    let unfilledFields = [];
-                    //Loop through all fields
-                    for (let i = 0; i < form.elements.length; i++) {
-                        let field = form.elements[i];
-                        //console.log(field.name + ': ' + field.value);
-                        if (!field.value && field.type !== "submit" && field.type !== "button") {
-                            console.log(field.name)
-                            unfilledFields.push(field.name);
-                            field.classList.add("error");
-                        }else{
-                            field.classList.remove("error");
-                        }
-                    }
-
-                    // Get the date fields
-                    let startDateField = document.querySelector('#start_date');
-                    let endDateField = document.querySelector('#end_date');
-
-                    // If there are any unfilled fields, display an alert and prevent form submission
-                    if (unfilledFields.length > 0) {
-                        event.preventDefault();
-                        alert('Please fill in the following fields:\n-' + unfilledFields.join('\n- '));
-                    }else {
-                        // Check if the date fields contain valid dates
-                        if (!isValidDate(startDateField.value) || !isValidDate(endDateField.value)) {
-                            // If the dates are not valid, display an error message and prevent form submission
-                            console.log('Invalid dates');
-                            event.preventDefault();
-                            alert('Please enter valid dates in the format YYYY-MM-DD\n' + startDateField.value + "\n" + endDateField.value);
-                        }else{
-                            console.log('Fetch Response');
-                            // The form data is valid, submit the form using an AJAX request
-                            fetch(form.action, {
-                                method: 'POST',
-                                body: new FormData(form),
-                                headers: {'X-Requested-With': 'XMLHttpRequest'}
-                                })
-                            .then(response => {
-                                    console.log('Response:', response);
-                                    return response.json();
-                                })
-                            .then(data => {
-                                console.log('Data');
-                                console.log(data);
-                                //console.log('Response');
-                                //console.log(response);
-                                if (data.success) {
-                                    console.log('Success Response');
-                                    // The form was submitted successfully
-                                    window.location.href = data.success_url;
-                                    // Redirect to a success page or close the modal
-                                } else {
-                                    form.querySelectorAll('input').forEach(input => {
-                                        input.addEventListener('input', function () {
-                                            this.classList.remove('error');
-                                            this.setCustomValidity('');
-                                        });
-                                    });
-                                    console.log('Unsuccesful response');
-                                    //event.preventDefault();
-                                    // The form has errors
-                                    // Reset the form
-                                    //form.reset();
-                                    // Clear any custom validation messages
-                                    for (const fieldElement of form.elements) {
-                                        fieldElement.setCustomValidity('');
-                                    }
-                                    // Display the errors to the user
-                                    for (const [field, errors] of Object.entries(data.errors)) {
-                                        if (field === '__all__') {
-                                            // Display non-field errors
-                                            const nonFieldErrorsElement = document.querySelector('#non-field-errors');
-                                            if (nonFieldErrorsElement) {
-                                                nonFieldErrorsElement.textContent = errors.join('\n');
-                                            }
-                                        } else {
-                                            // Display field errors
-                                            const fieldElement = form.querySelector(`[name="${field}"]`);
-                                            if (fieldElement) {
-                                                fieldElement.setCustomValidity(errors.join('\n'));
-                                                fieldElement.classList.add('error');
-                                            }
-                                        }                                   
-                                        console.log(field, errors);
-                                    }
-                                    goToSection(0);
-                                    form.reportValidity();
-                                    // Reset the form fields
-                                    //form.reset();
-                                    setTimeout(function () {
-                                        resetFormFields(form);;
-                                      }, 1000);
-                                    
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Fetch Error:', error);
-                            });
-                        }
-                    }
-                });
-                break;
-
-            case "create":
+            prevBtn.style.display = "none";
+            prevBtn.addEventListener("click", function() {
                 //console.log(currentSection);
-                console.log("Create");
-                closeModalBtn = document.getElementById("closeModalBtn");
-                closeModalBtn.addEventListener("click", function() {
-                    closeModal();
-                });
-                prevBtn = document.getElementById("prevBtn");
-                nextBtn = document.getElementById("nextBtn");
-                submitBtn = document.querySelector("input[type='submit']");
-                sections = document.querySelectorAll(".form-section");
-                // Show the first section
+                // Hide the current section
+                sections[currentSection].style.display = "none";
+                // Decrement the current section index
+                currentSection--;
+                // Show the previous section
                 sections[currentSection].style.display = "block";
 
                 // Hide the "Previous" button on the first section
-                prevBtn.style.display = "none";
-                prevBtn.addEventListener("click", function() {
-                    // Hide the current section
-                    sections[currentSection].style.display = "none";
-                    // Decrement the current section index
-                    currentSection--;
-                    // Show the previous section
-                    sections[currentSection].style.display = "block";
-                    
-                    // Hide the "Previous" button on the first section
-                    if (currentSection === 0) {
-                        prevBtn.style.display = "none";
-                    }
-                    
-                    // Show the "Next" button if it was hidden
-                    nextBtn.style.display = "inline-block";
-                    
-                    // Hide the submit button if it was shown
-                    submitBtn.style.display = "none";
-                });
-                nextBtn.addEventListener("click", function() {
-                    // Hide the current section
-                    sections[currentSection].style.display = "none";
-                    // Increment the current section index
-                    currentSection++;
-                    // Show the next section
-                    sections[currentSection].style.display = "block";
-                    
-                    // Show the "Previous" button if it was hidden
-                    prevBtn.style.display = "inline-block";
-                    
-                    // Hide the "Next" button on the last section
-                    if (currentSection === sections.length - 1) {
-                        nextBtn.style.display = "none";
-                        // Show the submit button on the last section
-                        submitBtn.style.display = "inline-block";
-                    }
-                });
-                form = document.querySelector("form");
-                form.addEventListener("submit", function(event) {
-                    console.log("Create Submit")
-                    for (let i = 0; i < form.elements.length; i++) {
-                        let field = form.elements[i];
-                        console.log(field.name + ': ' + field.value);
-                    }
-                    // Get the date fields
-                    let startDateField = document.querySelector('#id_start_date');
-                    let endDateField = document.querySelector('#id_end_date');
-                    //let projectCode = document.querySelector('#id_code1') + "-" + document.querySelector('#id_code2');
-                    console.log(form);
-                    // Get all the required form fields
-                    let requiredFields = document.querySelectorAll('[required]');
-                
-                    // Keep track of the fields that are not filled
-                    let unfilledFields = [];
+                if (currentSection === 0) {
+                    prevBtn.style.display = "none";
+                }
 
-                    // Check if all the required fields are filled
-                    requiredFields.forEach(function(field) {
-                        if (!field.value) {
-                            unfilledFields.push(field.name);
-                            field.classList.add("error");
-                        }else{
-                            field.classList.remove("error");
-                        }
-                    });
-                
-                    // If there are any unfilled fields, display an alert and prevent form submission
-                    if (unfilledFields.length > 0) {
-                        event.preventDefault();
-                        alert('Please fill in the following fields:\n-' + unfilledFields.join('\n- '));
-                    }else {
-                        // Check if the date fields contain valid dates
-                        if (!isValidDate(startDateField.value) || !isValidDate(endDateField.value)) {
-                            // If the dates are not valid, display an error message and prevent form submission
-                            event.preventDefault();
-                            alert('Please enter valid dates in the format YYYY-MM-DD');
-                        }
-                    }
-                });
-                break;
+                // Show the "Next" button if it was hidden
+                nextBtn.style.display = "inline-block";
+
+                // Hide the submit button if it was shown
+                submitBtn.style.display = "none";
+            });
+            nextBtn.addEventListener("click", function() {
+                // Hide the current section
+                sections[currentSection].style.display = "none";
+                // Increment the current section index
+                currentSection++;
+                // Show the next section
+                sections[currentSection].style.display = "block";
+
+                // Show the "Previous" button if it was hidden
+                prevBtn.style.display = "inline-block";
+
+                // Hide the "Next" button on the last section
+                if (currentSection === sections.length - 1) {
+                    nextBtn.style.display = "none";
+                    // Show the submit button on the last section
+                    submitBtn.style.display = "inline-block";
+                }
+            });
+            form = document.querySelector("form");
+            form.addEventListener("submit", function(event) {
+                event.preventDefault();
+                console.log(action + " submit");
+                validateForm(action, form, event);
+            });
         }  
     }
 
+    function validateForm(action, form, event){
+        // Keep track of the fields that are not filled
+        let unfilledFields = [];
+        //Loop through all fields
+        for (let i = 0; i < form.elements.length; i++) {
+            let field = form.elements[i];
+            //console.log(field.name + ': ' + field.value);
+            if (!field.value && field.type !== "submit" && field.type !== "button") {
+                console.log(field.name);
+                unfilledFields.push(field.name);
+                field.classList.add("error");
+            }else{
+                field.classList.remove("error");
+            }
+        }
+        startDateField = document.querySelector('#id_start_date');
+        endDateField = document.querySelector('#id_end_date');
+        // If there are any unfilled fields, display an alert and prevent form submission
+        if (unfilledFields.length > 0) {
+            event.preventDefault();
+            alert('Please fill in the following fields:\n-' + unfilledFields.join('\n- '));
+        }else {
+            // Check if the date fields contain valid dates
+            if (!isValidDate(startDateField.value) || !isValidDate(endDateField.value)) {
+                // If the dates are not valid, display an error message and prevent form submission
+                console.log('INVALID DATES');
+                event.preventDefault();
+                alert('Please enter valid dates in the format YYYY-MM-DD\n' + startDateField.value + "\n" + endDateField.value);
+            }else{
+                console.log('FETCHING RESPONSE');
+                // The form data is valid, submit the form using an AJAX request
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    })
+                .then(response => {
+                        console.log('Response:', response);
+                        return response.json();
+                    })
+                .then(data => {
+                    if (data.success) {
+                        console.log('SUCCESS RESPONSE');
+                        // The form was submitted successfully
+                        // Redirect to a success page or close the modal
+                        window.location.href = data.success_url;
+                    } else {
+                        console.log('UNSUCSSEFUL RESPONSE');
+                        form.querySelectorAll('input').forEach(input => {
+                            input.addEventListener('input', function () {
+                                this.classList.remove('error');
+                                this.setCustomValidity('');
+                            });
+                        });
+                        
+                        //event.preventDefault();
+                        // The form has errors
+                        // Reset the form
+                        //form.reset();
+                        // Clear any custom validation messages
+                        for (const fieldElement of form.elements) {
+                            fieldElement.setCustomValidity('');
+                        }
+                        // Display the errors to the user
+                        for (const [field, errors] of Object.entries(data.errors)) {
+                            if (field === '__all__') {
+                                // Display non-field errors
+                                const nonFieldErrorsElement = document.querySelector('#non-field-errors');
+                                if (nonFieldErrorsElement) {
+                                    nonFieldErrorsElement.textContent = errors.join('\n');
+                                }
+                            } else {
+                                // Display field errors
+                                const fieldElement = form.querySelector(`[name="${field}"]`);
+                                if (fieldElement) {
+                                    fieldElement.setCustomValidity(errors.join('\n'));
+                                    fieldElement.classList.add('error');
+                                }
+                            }                                   
+                            console.log(field, errors);
+                        }
+                        goToSection(0);
+                        form.reportValidity();
+                        // Reset the form fields
+                        //form.reset();
+                        setTimeout(function () {
+                            resetFormFields(form);;
+                          }, 1000);
+                        
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                });
+            }
+        }
+    }
     function resetFormFields(form) {
-        
-        
         // Clear any custom validation messages
         for (const fieldElement of form.elements) {
           fieldElement.setCustomValidity('');
         }
-      
-        // Remove error classes from all fields
-        //const errorFields = form.querySelectorAll('.error');
-        //errorFields.forEach((field) => field.classList.remove('error'));
     }
     function goToSection(section){
         if(currentSection!= section){
             sections[currentSection].style.display = "none";
             sections[section].style.display = "block";
             currentSection = section;
-            //submitBtn.style.display = "none";
             prevBtn.style.display = "none";
         }
     }
@@ -387,10 +266,15 @@ $(document).ready(function() {
         // The date is valid
         return true;
     }
+
     // Close the modal when the user clicks outside of it
     $(window).click(function(event) {
         if (event.target == modal) {
             closeModal();
         }
     });
+    //Alert code:
+    setTimeout(function() {
+        document.querySelector('.alert').classList.add('hide');
+    }, 3000);
 });

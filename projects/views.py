@@ -33,7 +33,6 @@ class ProjectDetailView(LoginRequiredMixin, UpdateView):
     success_url = "/"
     
     def form_valid(self, form):
-        print(self)
         print("Sucessfull FORM")
         # Save the data to the database
         form.save()
@@ -53,13 +52,43 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
     template_name = 'project/create.html'
     success_url = '/'
     
+    def get_initial(self):
+        # Set the initial data for the form
+        initial_data = {
+            'code1': 'MCAAL',
+            'code2': 'EAS0',
+            'name': 'Default Project',
+            'manager': 'Project Manager',
+            'description': 'Project Description',
+            'type': '1',
+            'is_external': True,
+            'is_rd': '1',
+            'start_date': '2022-01-01',
+            'end_date': '2022-12-31',
+            'status': '1',
+            'payment': '1',
+            'visibility': '1',
+            'travel_time': 50,
+            'long_time': 150,
+            'extra_time': 200,
+            'weekend_time': 20,
+        }       
+        return initial_data
+
     def form_valid(self, form):
-        try:
-            return super().form_valid(form)
-        except IntegrityError:
-            form.add_error(None, 'Error: Code already exists')
-            return self.form_invalid(form)
-    
+        print("Sucessfull FORM")
+        # Save the data to the database
+        form.save()
+        # Return a success response
+        messages.success(self.request, f'Project "{form.instance.name}" was created successfully!')
+        # Return a success response with the success URL
+        return JsonResponse({'success': True, 'success_url': self.success_url})
+
+    def form_invalid(self, form):
+        print("Unsucessfull FORM")
+        # Return the form's errors as a JSON response
+        return JsonResponse({'errors': form.errors})
+ 
 class ProjectDeleteView(LoginRequiredMixin, DeleteView):
     template_name = "project/delete.html"
     model = Project
@@ -74,15 +103,4 @@ class ProjectDeleteView(LoginRequiredMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context['delete_url'] = reverse('projects:delete', args=[self.object.pk])
         return context
-
-class ProjectCreateView(LoginRequiredMixin, CreateView):
-    model = Project
-    form_class = ProjectCreateForm
-    template_name = 'project/create.html'
-    success_url = '/'
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, f'Project "{form.instance.name}" was created successfully!')
-        return response
     
