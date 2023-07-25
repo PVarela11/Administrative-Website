@@ -1,9 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.template.loader import render_to_string
-
 
 from django.urls import reverse_lazy
 from django.shortcuts import render
@@ -25,12 +25,19 @@ class HomePage(LoginRequiredMixin, ListView):
     context_object_name = "projects"
     queryset = Project.objects.all().order_by('-id')[0:10]
 
-class ProjectDetailView(LoginRequiredMixin, UpdateView):
+class ProjectEditView(LoginRequiredMixin, UpdateView):
     http_method_names=["get", "post"]
     model = Project
     template_name = "project/edit.html"
     form_class = ProjectEditForm
     success_url = "/"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['users'] = User.objects.exclude(is_superuser=True)
+        #User.objects.exclude(username='admin')
+        return context
+
     
     def form_valid(self, form):
         print("Sucessfull FORM")
@@ -58,7 +65,7 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
             'code1': 'MCAAL',
             'code2': 'EAS0',
             'name': 'Default Project',
-            'manager': 'Project Manager',
+            'manager': User.objects.first(),
             'description': 'Project Description',
             'type': '1',
             'is_external': True,

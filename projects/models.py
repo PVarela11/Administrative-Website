@@ -1,12 +1,12 @@
 from django.db import models
 from django.db.models import UniqueConstraint
+from django.contrib.auth.models import User
 
 STATUS_CHOICES = (
     ("1", "Not started"),
     ("2", "Ongoing"),
     ("3", "Complete"),
 )
-
 TYPE_PROJECT_CHOICES = (
     ("1", "External project"),
     ("2", "Commencement driver assignment"),
@@ -17,13 +17,11 @@ TYPE_PROJECT_CHOICES = (
     ("7", "Service Ongoing"),
     ("8", "Short-term leave of absence skills development"),
 )
-
 RD_CHOICES = (
     ("1", "Not"),
     ("2", "Research"),
     ("3", "Development"),
 )
-
 PAYMENT_CHOICES = (
     ("1", "Current account"),
     ("2", "Fixed cost 30"),
@@ -31,12 +29,10 @@ PAYMENT_CHOICES = (
     ("4", "Fixed cost 100"),
     ("5", "Not billable"),
 )
-
 VISIBILITY_CHOICES = (
     ("1", "Visible only to the member of the project"),
     ("2", "Visible to everyone"),
 )
-
 PAYMENT_DAYS_CHOICES = (
     ("1", "Immediate"),
     ("2", "30 Days"),
@@ -56,8 +52,12 @@ class Project(models.Model):
     code1 = models.CharField(max_length=5)
     code2 = models.CharField(max_length=4)
     name = models.CharField(max_length=120, unique=True)
-    #TODO: MANAGER SHOULD BE USER#
-    manager = models.CharField(max_length=240)
+    manager = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        limit_choices_to={'is_staff': False}
+    )
     description = models.TextField(null=True)
     type = models.CharField(
         max_length = 1,
@@ -99,11 +99,13 @@ class Project(models.Model):
         return self.name
     
 class Client(models.Model):
-    code = models.CharField(max_length=4, blank=False, null=False)
     name = models.CharField(max_length=254, blank=False, null=False)
-    fiscal_num = models.IntegerField(blank=False, null=False)
+    tax_id = models.IntegerField(blank=False, null=False)
     reference = models.IntegerField()
     purchase_num = models.IntegerField()
+    project_value = models.DecimalField(max_digits=10, decimal_places=2)
+    hour_value = models.DecimalField(max_digits=10, decimal_places=2)
+    extra_costs = models.DecimalField(max_digits=10, decimal_places=2)
     payment_days = models.CharField(
         max_length=1,
         choices= PAYMENT_DAYS_CHOICES
@@ -112,6 +114,6 @@ class Client(models.Model):
         max_length=1,
         choices= TYPE_VAT_CHOICES
     )
-    project_value = models.IntegerField()
-    hour_value = models.IntegerField()
-    extra_costs = models.IntegerField()
+
+    def __str__(self):
+        return self.name
