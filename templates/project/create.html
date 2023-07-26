@@ -27,6 +27,12 @@
     <p>{{ form.night_time.label_tag }} {{ form.night_time }}</p>
   </div>
 
+  <div class="form-section" id="section3" style="display: none;">
+    <h3>Client Data</h3>
+    <p>{{ form.client.label_tag }} {{ form.client }}</p>
+    {{ form.client_form.as_p }}
+  </div>
+
   <!-- Add more sections here -->
   <button type="button" id="prevBtn" style="display:none;">Previous</button>
   <button type="button" id="nextBtn">Next</button>

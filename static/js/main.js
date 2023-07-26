@@ -114,7 +114,41 @@ $(document).ready(function() {
                 console.log(action + " submit");
                 validateForm(action, form, event);
             });
-        }  
+        }
+        $('#id_client').on('change', function() {
+            var clientId = $(this).val();
+
+            if (clientId) {
+                $.ajax({
+                    url: '/clients/' + clientId + '/',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#id_client_name').val(data.client_name);
+                        $('#id_tax_id').val(data.tax_id);
+                        $('#id_reference').val(data.reference);
+                        $('#id_purchase_num').val(data.purchase_num);
+                        $('#id_project_value').val(data.project_value);
+                        $('#id_hour_value').val(data.hour_value);
+                        $('#id_extra_costs').val(data.extra_costs);
+                        $('#id_payment_days').val(data.payment_days);
+                        $('#id_type_vat').val(data.type_vat);
+                    }
+                });
+            } else {
+                console.log("Entrou no else");
+                // clear the client fields if no client is selected
+                $('#id_client_name').val('');
+                $('#id_tax_id').val('');
+                $('#id_reference').val('');
+                $('#id_purchase_num').val('');
+                $('#id_project_value').val('');
+                $('#id_hour_value').val('');
+                $('#id_extra_costs').val('');
+                $('#id_payment_days').val('');
+                $('#id_type_vat').val('');
+            }
+        });
     }
 
     function validateForm(action, form, event){
@@ -277,4 +311,5 @@ $(document).ready(function() {
     setTimeout(function() {
         document.querySelector('.alert').classList.add('hide');
     }, 3000);
+    
 });

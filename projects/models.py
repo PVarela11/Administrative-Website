@@ -47,11 +47,32 @@ TYPE_VAT_CHOICES = (
     ("4", "Normal (23%)"),
     ("5", "Reduzida (6%)"),
 )
+
 # Create your models here.
+class Client(models.Model):
+    client_name = models.CharField(max_length=254, blank=False, null=False)
+    tax_id = models.IntegerField(blank=False, null=False)
+    reference = models.IntegerField()
+    purchase_num = models.IntegerField()
+    project_value = models.DecimalField(max_digits=10, decimal_places=2)
+    hour_value = models.DecimalField(max_digits=10, decimal_places=2)
+    extra_costs = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_days = models.CharField(
+        max_length=1,
+        choices= PAYMENT_DAYS_CHOICES
+    )
+    type_vat = models.CharField(
+        max_length=1,
+        choices= TYPE_VAT_CHOICES
+    )
+
+    def __str__(self):
+        return self.client_name
+
 class Project(models.Model):
     code1 = models.CharField(max_length=5)
     code2 = models.CharField(max_length=4)
-    name = models.CharField(max_length=120, unique=True)
+    project_name = models.CharField(max_length=120, unique=True)
     manager = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -89,6 +110,7 @@ class Project(models.Model):
     extra_time = models.IntegerField(default=200)
     weekend_time = models.IntegerField(default=20)
     night_time = models.IntegerField(default=40)
+    client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)
     
     class Meta:
         constraints = [
@@ -96,24 +118,4 @@ class Project(models.Model):
         ]
         
     def __str__(self):
-        return self.name
-    
-class Client(models.Model):
-    name = models.CharField(max_length=254, blank=False, null=False)
-    tax_id = models.IntegerField(blank=False, null=False)
-    reference = models.IntegerField()
-    purchase_num = models.IntegerField()
-    project_value = models.DecimalField(max_digits=10, decimal_places=2)
-    hour_value = models.DecimalField(max_digits=10, decimal_places=2)
-    extra_costs = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_days = models.CharField(
-        max_length=1,
-        choices= PAYMENT_DAYS_CHOICES
-    )
-    type_vat = models.CharField(
-        max_length=1,
-        choices= TYPE_VAT_CHOICES
-    )
-
-    def __str__(self):
-        return self.name
+        return self.project_name

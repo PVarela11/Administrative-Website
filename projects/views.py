@@ -6,13 +6,13 @@ from django.db import IntegrityError
 from django.template.loader import render_to_string
 
 from django.urls import reverse_lazy
-from django.shortcuts import render
-from django.views.generic import ListView, UpdateView, DeleteView, CreateView
+from django.shortcuts import render, get_object_or_404
+from django.views.generic import ListView, UpdateView, DeleteView, CreateView, View
 from django.http import HttpResponseRedirect,JsonResponse
 from django.urls import reverse
 
 from .forms import ProjectEditForm, ProjectCreateForm
-from .models import Project
+from .models import Project, Client
 
 # Create your views here.
 class HomePage(LoginRequiredMixin, ListView):
@@ -111,3 +111,19 @@ class ProjectDeleteView(LoginRequiredMixin, DeleteView):
         context['delete_url'] = reverse('projects:delete', args=[self.object.pk])
         return context
     
+class GetClientView(View):
+    def get(self, request, client_id):
+        client = get_object_or_404(Client, pk=client_id)
+        data = {
+            'client_name': client.client_name,
+            'tax_id': client.tax_id,
+            'reference': client.reference,
+            'purchase_num': client.purchase_num,
+            'project_value': str(client.project_value),
+            'hour_value': str(client.hour_value),
+            'extra_costs': str(client.extra_costs),
+            'payment_days': client.payment_days,
+            'type_vat': client.type_vat,
+        }
+        return JsonResponse(data)
+
