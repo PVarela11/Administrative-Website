@@ -57,6 +57,7 @@ $(document).ready(function() {
     }
 
     function initializeForm(){
+        toggleInputFields();
         const closeModalBtn = document.getElementById("closeModalBtn");
         closeModalBtn.addEventListener("click", function() {
             closeModal();
@@ -117,7 +118,8 @@ $(document).ready(function() {
         }
         $('#id_client').on('change', function() {
             var clientId = $(this).val();
-
+            console.log(clientId);
+            toggleInputFields();
             if (clientId) {
                 $.ajax({
                     url: '/clients/' + clientId + '/',
@@ -158,7 +160,7 @@ $(document).ready(function() {
         for (let i = 0; i < form.elements.length; i++) {
             let field = form.elements[i];
             //console.log(field.name + ': ' + field.value);
-            if (!field.value && field.type !== "submit" && field.type !== "button") {
+            if (!field.value && field.type !== "submit" && field.type !== "button" && field.name !== "client") {
                 console.log(field.name);
                 unfilledFields.push(field.name);
                 field.classList.add("error");
@@ -180,6 +182,7 @@ $(document).ready(function() {
                 event.preventDefault();
                 alert('Please enter valid dates in the format YYYY-MM-DD\n' + startDateField.value + "\n" + endDateField.value);
             }else{
+                console.log(form);
                 console.log('FETCHING RESPONSE');
                 // The form data is valid, submit the form using an AJAX request
                 fetch(form.action, {
@@ -192,13 +195,14 @@ $(document).ready(function() {
                         return response.json();
                     })
                 .then(data => {
+                    console.log(data);
                     if (data.success) {
                         console.log('SUCCESS RESPONSE');
                         // The form was submitted successfully
                         // Redirect to a success page or close the modal
                         window.location.href = data.success_url;
                     } else {
-                        console.log('UNSUCSSEFUL RESPONSE');
+                        console.log('UNSUCCESSFUL RESPONSE');
                         form.querySelectorAll('input').forEach(input => {
                             input.addEventListener('input', function () {
                                 this.classList.remove('error');
@@ -219,8 +223,11 @@ $(document).ready(function() {
                             if (field === '__all__') {
                                 // Display non-field errors
                                 const nonFieldErrorsElement = document.querySelector('#non-field-errors');
-                                if (nonFieldErrorsElement) {
-                                    nonFieldErrorsElement.textContent = errors.join('\n');
+                                nonFieldErrorsElement.textContent = errors.join('\n');
+                                console.log(errors[0]);
+                                if(errors[0]=="Project with this Code1 and Code2 already exists."){
+                                    document.querySelector('#id_code1').classList.add('error');
+                                    document.querySelector('#id_code2').classList.add('error');
                                 }
                             } else {
                                 // Display field errors
@@ -232,7 +239,7 @@ $(document).ready(function() {
                             }                                   
                             console.log(field, errors);
                         }
-                        goToSection(0);
+                        //goToSection(0);
                         form.reportValidity();
                         // Reset the form fields
                         //form.reset();
@@ -299,6 +306,18 @@ $(document).ready(function() {
     
         // The date is valid
         return true;
+    }
+    function toggleInputFields() {
+        const clientSelect = $('#id_client');
+        const inputFields = $('.disable-on-select');
+
+        if (clientSelect.val() === '') {
+            // Enable the input fields when the client select is set to the default value
+            inputFields.prop('disabled', false);
+        } else {
+            // Disable the input fields when the client select is not set to the default value
+            inputFields.prop('disabled', true);
+        }
     }
 
     // Close the modal when the user clicks outside of it

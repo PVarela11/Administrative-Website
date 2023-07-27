@@ -44,13 +44,14 @@ class ProjectEditView(LoginRequiredMixin, UpdateView):
         # Save the data to the database
         form.save()
         # Return a success response
-        messages.success(self.request, f'Project "{form.instance.name}" was updated successfully!')
+        messages.success(self.request, f'Project "{form.instance.project_name}" was updated successfully!')
         # Return a success response with the success URL
         return JsonResponse({'success': True, 'success_url': self.success_url})
     
     def form_invalid(self, form):
-        print("Unsucessfull FORM")
+        print("Unsuccessfull FORM")
         # Return the form's errors as a JSON response
+        print(form.errors)
         return JsonResponse({'errors': form.errors})
 
 class ProjectCreateView(LoginRequiredMixin, CreateView):
@@ -63,8 +64,8 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
         # Set the initial data for the form
         initial_data = {
             'code1': 'MCAAL',
-            'code2': 'EAS0',
-            'name': 'Default Project',
+            'code2': 'EAS1',
+            'project_name': 'Default Project',
             'manager': User.objects.first(),
             'description': 'Project Description',
             'type': '1',
@@ -83,11 +84,11 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
         return initial_data
 
     def form_valid(self, form):
-        print("Sucessfull FORM")
+        print("Successfull FORM")
         # Save the data to the database
         form.save()
         # Return a success response
-        messages.success(self.request, f'Project "{form.instance.name}" was created successfully!')
+        messages.success(self.request, f'Project "{form.instance.project_name}" was created successfully!')
         # Return a success response with the success URL
         return JsonResponse({'success': True, 'success_url': self.success_url})
 
@@ -96,21 +97,6 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
         # Return the form's errors as a JSON response
         return JsonResponse({'errors': form.errors})
  
-class ProjectDeleteView(LoginRequiredMixin, DeleteView):
-    template_name = "project/delete.html"
-    model = Project
-    success_url = "/"
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, 'Project was eliminated successfully')
-        return response
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['delete_url'] = reverse('projects:delete', args=[self.object.pk])
-        return context
-    
 class GetClientView(View):
     def get(self, request, client_id):
         client = get_object_or_404(Client, pk=client_id)
@@ -127,3 +113,17 @@ class GetClientView(View):
         }
         return JsonResponse(data)
 
+class ProjectDeleteView(LoginRequiredMixin, DeleteView):
+    template_name = "project/delete.html"
+    model = Project
+    success_url = "/"
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Project was eliminated successfully')
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['delete_url'] = reverse('projects:delete', args=[self.object.pk])
+        return context

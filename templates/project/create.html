@@ -5,7 +5,7 @@
     <h3>Project Data</h3></br>
     <p>{{ form.code1.label_tag }} {{ form.code1 }}</p>
     <p>{{ form.code2.label_tag }} {{ form.code2 }}</p>
-    <p>{{ form.name.label_tag }} {{ form.name }}</p>
+    <p>{{ form.project_name.label_tag }} {{ form.project_name }}</p>
     <p>{{ form.manager.label_tag }} {{ form.manager }}</p>
     <p>{{ form.description.label_tag }} {{ form.description }}</p>
     <p>{{ form.type.label_tag }} {{ form.type }}</p>
@@ -14,7 +14,6 @@
     <p>{{ form.start_date.label_tag }} {{ form.start_date }}</p>
     <p>{{ form.end_date.label_tag }} {{ form.end_date }}</p>
   </div>
-
   <div class="form-section" id="section2" style="display: none;">
     <h3>Section 2</h3>
     <p>{{ form.status.label_tag }} {{ form.status }}</p>
@@ -26,14 +25,12 @@
     <p>{{ form.weekend_time.label_tag }} {{ form.weekend_time }}</p>
     <p>{{ form.night_time.label_tag }} {{ form.night_time }}</p>
   </div>
-
   <div class="form-section" id="section3" style="display: none;">
     <h3>Client Data</h3>
     <p>{{ form.client.label_tag }} {{ form.client }}</p>
     {{ form.client_form.as_p }}
   </div>
 
-  <!-- Add more sections here -->
   <button type="button" id="prevBtn" style="display:none;">Previous</button>
   <button type="button" id="nextBtn">Next</button>
   <button type="button" id="closeModalBtn">Close</button>

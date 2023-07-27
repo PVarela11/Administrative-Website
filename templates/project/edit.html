@@ -15,7 +15,7 @@
     
       <div class="form-group">
         <label for="name">Name</label>
-        <input type="text" class="form-control" id="name" name="name" value="{{ project.name }}">
+        <input type="text" class="form-control" id="project_name" name="project_name" value="{{ project.project_name }}">
       </div>
     
       <div class="form-group">
@@ -129,7 +129,64 @@
         <input type="number" class="form-control" id="night_time" name="night_time" value="{{ project.night_time }}">
       </div>
   </div>
-  
+  <div class="form-section" id="section3" style="display: none;">
+    <p>{{ form.client.label_tag }} {{ form.client }}</p>
+    <div class="form-group">
+        <label for="client_name">Client Name</label>
+        <input type="text" class="form-control disable-on-select" id="id_client_name" name="client_name" value="{{ project.client.client_name }}" maxlength="254">
+    </div>
+
+    <div class="form-group">
+        <label for="tax_id">Tax ID</label>
+        <input type="number" class="form-control disable-on-select" id="id_tax_id" name="tax_id" value="{{ project.client.tax_id }}">
+    </div>
+
+    <div class="form-group">
+        <label for="reference">Reference</label>
+        <input type="number" class="form-control disable-on-select" id="id_reference" name="reference" value="{{ project.client.reference }}">
+    </div>
+
+    <div class="form-group">
+        <label for="purchase_num">Purchase Number</label>
+        <input type="number" class="form-control disable-on-select" id="id_purchase_num" name="purchase_num" value="{{ project.client.purchase_num }}">
+    </div>
+
+    <div class="form-group">
+        <label for="project_value">Project Value</label>
+        <input type="number" class="form-control disable-on-select" id="id_project_value" name="project_value" value="{{ project.client.project_value }}">
+    </div>
+
+    <div class="form-group">
+        <label for="hour_value">Hour Value</label>
+        <input type="number" class="form-control disable-on-select" id="id_hour_value" name="hour_value" value="{{ project.client.hour_value }}">
+    </div>
+
+    <div class="form-group">
+        <label for="extra_costs">Extra Costs</label>
+        <input type="number" class="form-control disable-on-select" id="id_extra_costs" name="extra_costs" value="{{ project.client.extra_costs }}">
+    </div>
+
+    <div class="form-group">
+        <label for="payment_days">Payment Days</label>
+        <select class="form-control disable-on-select" id="id_payment_days" name="payment_days">
+            <option value="1" {% if project.client.payment_days == '1' %}selected{% endif %}>Immediate</option>
+            <option value="2" {% if project.client.payment_days == '2' %}selected{% endif %}>30 Days</option>
+            <option value="3" {% if project.client.payment_days == '3' %}selected{% endif %}>60 Days</option>
+            <option value="4" {% if project.client.payment_days == '4' %}selected{% endif %}>120 Days</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="type_vat">Type VAT</label>
+        <select class="form-control disable-on-select" id="id_type_vat" name="type_vat">
+            <option value="1" {% if project.client.type_vat == '1' %}selected{% endif %}>Intermédio (13%)</option>
+            <option value="2" {% if project.client.type_vat == '2' %}selected{% endif %}>Isento de IVA</option>
+            <option value="3" {% if project.client.type_vat == '3' %}selected{% endif %}>IVA Autoliquidação</option>
+            <option value="4" {% if project.client.type_vat == '4' %}selected{% endif %}>Normal (23%)</option>
+            <option value="5" {% if project.client.type_vat == '5' %}selected{% endif %}>Reduzida (6%)</option>
+        </select>
+    </div>
+</div>
 
   <!--Buttons-->
   <button type="button" id="prevBtn" style="display:none;">Previous</button>
