@@ -50,7 +50,7 @@ TYPE_VAT_CHOICES = (
 
 # Create your models here.
 class Client(models.Model):
-    client_name = models.CharField(max_length=254, blank=False, null=False)
+    client_name = models.CharField(max_length=254, blank=False, null=False, unique=True)
     tax_id = models.IntegerField(blank=False, null=False)
     reference = models.IntegerField()
     purchase_num = models.IntegerField()

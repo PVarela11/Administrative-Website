@@ -118,7 +118,6 @@ $(document).ready(function() {
         }
         $('#id_client').on('change', function() {
             var clientId = $(this).val();
-            console.log(clientId);
             toggleInputFields();
             if (clientId) {
                 $.ajax({
@@ -137,7 +136,7 @@ $(document).ready(function() {
                         $('#id_type_vat').val(data.type_vat);
                     }
                 });
-            } else {
+            } /*else {
                 console.log("Entrou no else");
                 // clear the client fields if no client is selected
                 $('#id_client_name').val('');
@@ -149,7 +148,7 @@ $(document).ready(function() {
                 $('#id_extra_costs').val('');
                 $('#id_payment_days').val('');
                 $('#id_type_vat').val('');
-            }
+            }*/
         });
     }
 

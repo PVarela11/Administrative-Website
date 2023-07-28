@@ -29,6 +29,7 @@ class ClientForm(ModelForm):
 
 class ProjectEditForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset=Client.objects.all(), required=False, empty_label='Create New Client')
+    client_name = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -41,13 +42,13 @@ class ProjectEditForm(forms.ModelForm):
         if not client:
             # Create a new client with the provided data
             client_form = ClientForm(data=self.data)
-            print(client_form)
             if client_form.is_valid():
                 client = client_form.save()
                 cleaned_data['client'] = client
             else:
+                print(client_form.errors)
                 # If the client_form is not valid, raise a validation error
-                raise forms.ValidationError('Invalid client data')
+                raise forms.ValidationError(client_form.errors)
 
         return cleaned_data
 
