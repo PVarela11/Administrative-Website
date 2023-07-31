@@ -119,3 +119,17 @@ class Project(models.Model):
         
     def __str__(self):
         return self.project_name
+
+class Activity(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='activities')
+    activity_name = models.CharField(max_length=255)
+    description = models.TextField()
+    responsible = models.ForeignKey(User, on_delete=models.CASCADE, related_name='activities_responsible')
+    participants = models.ManyToManyField(User, related_name='activities_participant')
+    
+    class Meta:
+         verbose_name = "Activity"
+         verbose_name_plural = "Activities"
+
+    def __str__(self):
+        return self.activity_name

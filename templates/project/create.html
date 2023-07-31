@@ -30,6 +30,17 @@
     <p>{{ form.client.label_tag }} {{ form.client }}</p>
     {{ form.client_form.as_p }}
   </div>
+  <div class="form-section" id="section4" style="display: none;">
+    <h3>Activities</h3>
+    <div id="activity-list"></div>
+    {{ form.activity_forms.management_form }}
+    {% for activity_form in form.activity_forms %}
+        <div class="activity-form">
+            {{ activity_form.as_p }}
+        </div>
+    {% endfor %}
+    <button type="button" id="add-activity">Add Activity</button>
+  </div>
 
   <button type="button" id="prevBtn" style="display:none;">Previous</button>
   <button type="button" id="nextBtn">Next</button>

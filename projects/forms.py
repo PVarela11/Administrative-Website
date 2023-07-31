@@ -1,10 +1,19 @@
 from django import forms
-from django.forms import ModelForm
-from .models import Project, Client, PAYMENT_DAYS_CHOICES, TYPE_VAT_CHOICES
+from django.forms import ModelForm, formset_factory
+
+from .models import Project, Client, Activity, PAYMENT_DAYS_CHOICES, TYPE_VAT_CHOICES
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.urls import reverse
+
+class ActivityForm(forms.ModelForm):
+    class Meta:
+        model = Activity
+        fields = '__all__'
+        exclude = ['project']
+
+ActivityFormSet = formset_factory(ActivityForm, extra=1)
 
 class ClientForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -46,7 +55,6 @@ class ProjectEditForm(forms.ModelForm):
                 client = client_form.save()
                 cleaned_data['client'] = client
             else:
-                print(client_form.errors)
                 # If the client_form is not valid, raise a validation error
                 raise forms.ValidationError(client_form.errors)
 
@@ -56,18 +64,38 @@ class ProjectEditForm(forms.ModelForm):
         model = Project
         fields = '__all__'
 
-
 class ProjectCreateForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset=Client.objects.all(), required=False, empty_label='Create New Client')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.client_form = ClientForm(data=kwargs.get('data'))
+        self.activity_forms = ActivityFormSet(data=kwargs.get('data'), prefix='activity')
+
+    def save(self, commit=True):
+        # Save the project instance
+        project = super().save(commit)
+
+        # Handle the data from the ActivityFormSet
+        activity_forms = ActivityFormSet(data=self.data, prefix='activity')
+        if activity_forms.is_valid():
+            # Save the activities
+            for activity_form in activity_forms:
+                activity = activity_form.save(commit=False)
+                activity.project = project
+                activity.save()
+                # Save many-to-many fields
+                activity_form.save_m2m()
+        else:
+            # If the formset is not valid, raise a validation error
+            raise forms.ValidationError(activity_forms.errors)
+
+        return project
+
 
     def clean(self):
         cleaned_data = super().clean()
         client = cleaned_data.get('client')
-
         # Check if the user entered client details
         if not client:
             # Create a new client with the provided data
@@ -77,10 +105,9 @@ class ProjectCreateForm(forms.ModelForm):
                 cleaned_data['client'] = client
             else:
                 # If the client_form is not valid, raise a validation error
-                raise forms.ValidationError('Invalid client data')
-
-        return cleaned_data
-
+                raise forms.ValidationError(client_form.errors)
+            
+            return cleaned_data
     class Meta:
         model = Project
         fields = '__all__'

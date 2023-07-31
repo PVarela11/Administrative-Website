@@ -11,7 +11,7 @@ from django.views.generic import ListView, UpdateView, DeleteView, CreateView, V
 from django.http import HttpResponseRedirect,JsonResponse
 from django.urls import reverse
 
-from .forms import ProjectEditForm, ProjectCreateForm
+from .forms import ProjectEditForm, ProjectCreateForm, ActivityForm
 from .models import Project, Client
 
 # Create your views here.
