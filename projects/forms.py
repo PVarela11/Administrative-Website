@@ -80,7 +80,7 @@ class ProjectCreateForm(forms.ModelForm):
         activity_forms = ActivityFormSet(data=self.data, prefix='activity')
         if activity_forms.is_valid():
             # Save the activities
-            for activity_form in activity_forms:
+            for activity_form in activity_forms[:-1]:
                 activity = activity_form.save(commit=False)
                 activity.project = project
                 activity.save()
@@ -91,7 +91,6 @@ class ProjectCreateForm(forms.ModelForm):
             raise forms.ValidationError(activity_forms.errors)
 
         return project
-
 
     def clean(self):
         cleaned_data = super().clean()
@@ -108,6 +107,7 @@ class ProjectCreateForm(forms.ModelForm):
                 raise forms.ValidationError(client_form.errors)
             
             return cleaned_data
+        
     class Meta:
         model = Project
         fields = '__all__'
