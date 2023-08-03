@@ -39,10 +39,47 @@ class ClientForm(ModelForm):
 class ProjectEditForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset=Client.objects.all(), required=False, empty_label='Create New Client')
     client_name = forms.CharField(required=False)
+    
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.client_form = ClientForm(data=kwargs.get('data'))
+        self.activity_forms = ActivityFormSet(data=kwargs.get('data'), prefix='activity')
+
+    def save(self, commit=True):
+        # Save the project instance
+        project = super().save(commit)
+
+        # Handle the data from the ActivityFormSet
+        activity_forms = ActivityFormSet(data=self.data, prefix='activity')
+        if activity_forms.is_valid():
+            # Keep track of the activity instances that are in the form
+            activity_instances = []
+
+            # Save or update the activities
+            for activity_form in activity_forms[:-1]:
+                activity = activity_form.save(commit=False)
+                activity.project = project
+                activity.save()
+                # Save many-to-many fields
+                activity_form.save_m2m()
+
+                # Add the activity instance to the list of instances in the form
+                activity_instances.append(activity)
+
+            # Delete any activities that are not in the form
+            print(project.activities.all())
+            print(activity_instances)
+            for activity in project.activities.all():
+                if activity not in activity_instances:
+                    print(activity)
+                    activity.delete()
+        else:
+            # If the formset is not valid, raise a validation error
+            raise forms.ValidationError(activity_forms.errors)
+
+        return project
+
 
     def clean(self):
         cleaned_data = super().clean()

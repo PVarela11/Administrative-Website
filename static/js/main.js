@@ -13,6 +13,9 @@ $(document).ready(function() {
     let action;
     let currentSection = 0;
     let activitiesContainer;
+    let activityList;
+    let addActivityButton;
+    let totalForms;
 
     const modalFormContainer = document.getElementById("modalFormContainer");
     const createUrl = $("#createUrl").attr("data-url");
@@ -26,17 +29,18 @@ $(document).ready(function() {
     });
 
     deleteBtns.forEach(function(deleteBtn) {
-    deleteBtn.addEventListener('click', function(event) {
-        //Prevent triggering tr click event
-        event.preventDefault();
-        event.stopPropagation();
-        let deleteUrl = this.getAttribute('data-url');
-        action = "delete";
-        console.log(deleteUrl)
-        event.preventDefault();
-        fetchFormHtml(deleteUrl);
+        deleteBtn.addEventListener('click', function(event) {
+            //Prevent triggering tr click event
+            event.preventDefault();
+            event.stopPropagation();
+            let deleteUrl = this.getAttribute('data-url');
+            action = "delete";
+            console.log(deleteUrl)
+            event.preventDefault();
+            fetchFormHtml(deleteUrl);
         });
     });
+
     //Click on the table rows opens modal to edit the project
     $(document.body).on("click", "tr[data-href]", function () {
         //window.location.href = this.dataset.href;
@@ -59,7 +63,6 @@ $(document).ready(function() {
 
     function initializeForm(){
 
-        toggleInputFields();
         const closeModalBtn = document.getElementById("closeModalBtn");
         closeModalBtn.addEventListener("click", function() {
             closeModal();
@@ -67,17 +70,20 @@ $(document).ready(function() {
         submitBtn = document.querySelector("input[type='submit']");
         if(action!="delete"){
 
+            toggleInputFields();
+            
             // Get the activity formset and the container element
-            //var activityFormset = document.querySelector('#id_activity-TOTAL_FORMS').parentNode;
-            //var activitiesContainer = activityFormset.parentNode;
             activitiesContainer = document.querySelector('#section4');
-            var activityList = document.querySelector('#activity-list');
-            var addActivityButton = document.querySelector('#add-activity');
+            addActivityButton = document.querySelector('#add-activity');
+
+            // Get the total number of forms in the formset
+            totalForms = document.querySelectorAll('.activity-form').length;
+            if(totalForms==0){
+                totalForms+=1;
+            }
+            document.querySelector('#id_activity-TOTAL_FORMS').value = totalForms;
             // Add an event listener to the "Add Activity" button
             document.querySelector('#add-activity').addEventListener('click', function() {
-                // Get the total number of forms in the formset
-                var totalForms = parseInt(document.querySelector('#id_activity-TOTAL_FORMS').value);
-
                 // Get the values of the activity form fields
                 var lastActivityForm = activitiesContainer.querySelector('.activity-form:not([style*="display: none"])');
                 var activityName = lastActivityForm.querySelector('[name$=activity_name]').value;
@@ -107,31 +113,30 @@ $(document).ready(function() {
                 // Clone the last activity form
                 var newActivityForm = lastActivityForm.cloneNode(true);
                 lastActivityForm.style.display = "none";
-                clearFields(newActivityForm);
-
                 // Update the form index
                 var formIndexRegex = new RegExp(`activity-(\\d+)-`, 'g');
                 newActivityForm.innerHTML = newActivityForm.innerHTML.replace(formIndexRegex, `activity-${totalForms}-`);
-
+                //Clean the new form so it has empty fields
+                clearFields(newActivityForm);
                 // Append the new activity form to the container element
                 activitiesContainer.insertBefore(newActivityForm, document.querySelector('#add-activity'));
 
                 // Increment the total number of forms in the formset
-                document.querySelector('#id_activity-TOTAL_FORMS').value = totalForms + 1;
+                totalForms+=1;
+                document.querySelector('#id_activity-TOTAL_FORMS').value = totalForms;
 
                 // Check if there are any hidden activities or if the button text is 'Update Activity'
                 var hiddenActivities = activityList.querySelectorAll('.activity-item[style*="display: none"]');
                 if (hiddenActivities.length > 0 || addActivityButton.textContent === 'Update Activity') {
-                    console.log("Edit Activity");
                     // Display all the activities
                     var activityItems = activityList.querySelectorAll('.activity-item');
                     // Get the activity-item element that is being shown
                     var visibleActivityItem = activityList.querySelector('.activity-item:not([style*="display: none"])');
-                    console.log(visibleActivityItem);
                     activityItems.forEach(function(item) {
                         item.style.removeProperty('display');
                         // Remove the unclickable class from all activityItems
                         item.classList.remove('unclickable');
+                        submitBtn.disabled = false;
                     });
 
                     // Get the value of the input element where the user entered the new name
@@ -156,97 +161,23 @@ $(document).ready(function() {
                     deleteButton.classList.add('delete-activity');
                     activityItem.appendChild(deleteButton);
                     activityList.appendChild(activityItem);
+                    addActivityListeners(activityItem);
                 } 
                 // Add a common class to all activity-form elements
-                var activityForms = activitiesContainer.querySelectorAll('.activity-form');
-                activityForms.forEach(function(form) {
-                    form.classList.add('activity-form-item');
-                });
+                //var activityForms = activitiesContainer.querySelectorAll('.activity-form');
+                //activityForms.forEach(function(form) {
+                //    form.classList.add('activity-form-item');
+                //});
                 //updateActivityFormIDs();
 
-                // Add an event listener to the activity item
-                activityItem.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    // Check if the delete button was clicked
-                    if (event.target.matches('.delete-activity')) {
-                        var confirmDelete = confirm('Are you sure you want to delete this activity?');
-                        if (confirmDelete) {
-                            console.log("Entrou delete");
-                            // Get the index of the clicked activity item
-                            var activityIndex = Array.from(activityList.children).indexOf(event.target.parentNode);
-                            console.log(activityIndex);
-                            //var activityForms = activitiesContainer.querySelectorAll('.activity-form'); 
-                            //var activityForm = activityForms[activityIndex]
-                            // Remove the corresponding activity form
-                            var activityForms = activitiesContainer.querySelectorAll('.activity-form'); 
-                            var activityForm = activityForms[activityIndex]
-                            //console.log(activityForm);
-                            // Check if the activity form exists and is a valid node
-                            if (activityForm && activityForm.parentNode) {
-                                // Remove the corresponding activity form
-                                activitiesContainer.removeChild(activityForm);
-                                // Decrement the total number of forms in the formset
-                                var totalForms = parseInt(document.querySelector('#id_activity-TOTAL_FORMS').value);
-                                document.querySelector('#id_activity-TOTAL_FORMS').value = totalForms - 1;
-
-                                // Remove the clicked activity item
-                                activityList.removeChild(event.target.parentNode);
-                                updateActivityFormIDs();
-                            } else {
-                                console.error('Invalid activity form or node.');
-                            }
-                        }  
-                    } else if (event.target.closest('.activity-item')) {
-                        // Get the index of the clicked activity item
-                        // Get the clicked activity item
-                        var activityItem = event.target.closest('.activity-item');
-
-                        // Get all the activity-item elements
-                        var activityItems = activityList.querySelectorAll('.activity-item');
-                        
-                        // Hide all the activity-item elements except for the clicked one
-                        activityItems.forEach(function(item) {
-                            if (item !== activityItem) {
-                                item.style.display = 'none';
-                            }
-                        });
-                        
-                        // Add the unclickable class to the clicked activityItem
-                        activityItem.classList.add('unclickable');
-
-                        // Change the text of the add-activity button
-                        addActivityButton.textContent = 'Update Activity';
-                    
-                        // Get the index of the clicked activity item
-                        var activityIndex = Array.from(activityList.querySelectorAll('.activity-item')).indexOf(activityItem);
-                        //var activityIndex = Array.from(activityList.children).indexOf(event.target.parentNode);
-                        //var activityIndex = Array.from(activityList.children).indexOf(event.target.closest('.activity-item'));
-                        //console.log(activityIndex);
-                        var activityForms = activitiesContainer.querySelectorAll('.activity-form'); 
-                        var activityForm = activityForms[activityIndex]
-                        //console.log(activityForm);
-
-                        // Delete the currently visible activity form
-                        var visibleActivityForm = activitiesContainer.querySelector('.activity-form:not([style*="display: none"])');
-                        if (visibleActivityForm) {
-                            activitiesContainer.removeChild(visibleActivityForm);
-
-                            // Decrement the total number of forms in the formset
-                            var totalForms = parseInt(document.querySelector('#id_activity-TOTAL_FORMS').value);
-                            document.querySelector('#id_activity-TOTAL_FORMS').value = totalForms - 1;
-                        }
-                        
-                        // Remove the clicked activity item from the activity list
-                        //activityList.removeChild(activityItem);
-
-                        //activityForms.removeChild(activityForm);
-                        //updateActivityFormIDs();
-                        // Show the corresponding activity form
-                        activityForm.style.display = 'block';
-                        
-                    }
-                });
             });
+            activityList = document.querySelector('#activity-list');
+            activities = activityList.querySelectorAll('.activity-item');
+            if (activities.length > 0) {
+                activities.forEach(element => {
+                    addActivityListeners(element);
+                });
+            }
 
             prevBtn = document.getElementById("prevBtn");
             nextBtn = document.getElementById("nextBtn");
@@ -256,7 +187,6 @@ $(document).ready(function() {
             // Hide the "Previous" button on the first section
             prevBtn.style.display = "none";
             prevBtn.addEventListener("click", function() {
-                //console.log(currentSection);
                 // Hide the current section
                 sections[currentSection].style.display = "none";
                 // Decrement the current section index
@@ -320,22 +250,86 @@ $(document).ready(function() {
                         $('#id_type_vat').val(data.type_vat);
                     }
                 });
-            } /*else {
-                console.log("Entrou no else");
-                // clear the client fields if no client is selected
-                $('#id_client_name').val('');
-                $('#id_tax_id').val('');
-                $('#id_reference').val('');
-                $('#id_purchase_num').val('');
-                $('#id_project_value').val('');
-                $('#id_hour_value').val('');
-                $('#id_extra_costs').val('');
-                $('#id_payment_days').val('');
-                $('#id_type_vat').val('');
-            }*/
+            }
+        });
+    }
+    function addActivityListeners(element){
+        // Add an event listener to the activity item
+        element.addEventListener('click', function(event) {
+            event.preventDefault();
+            // Check if the delete button was clicked
+            if (event.target.matches('.delete-activity')) {
+                var confirmDelete = confirm('Are you sure you want to delete this activity?');
+                if (confirmDelete) {
+                    // Get the index of the clicked activity item
+                    var activityIndex = Array.from(activityList.children).indexOf(event.target.parentNode);
+
+                    // Remove the corresponding activity form
+                    var activityForms = activitiesContainer.querySelectorAll('.activity-form'); 
+                    var activityForm = activityForms[activityIndex]
+
+                    // Check if the activity form exists and is a valid node
+                    if (activityForm && activityForm.parentNode) {
+                        // Remove the corresponding activity form
+                        activitiesContainer.removeChild(activityForm);
+                        // Decrement the total number of forms in the formset
+                        totalForms-=1;
+                        document.querySelector('#id_activity-TOTAL_FORMS').value = totalForms;
+
+                        // Remove the clicked activity item
+                        activityList.removeChild(event.target.parentNode);
+                        updateActivityFormIDs();
+                    } else {
+                        console.error('Invalid activity form or node.');
+                    }
+                }  
+            } else if (event.target.closest('.activity-item')) {
+                // Get the index of the clicked activity item
+                // Get the clicked activity item
+                var element = event.target.closest('.activity-item');
+
+                // Get all the activity-item elements
+                var activityItems = activityList.querySelectorAll('.activity-item');
+                
+                // Hide all the activity-item elements except for the clicked one
+                activityItems.forEach(function(item) {
+                    if (item !== element) {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                // Add the unclickable class to the clicked activityItem
+                element.classList.add('unclickable');
+
+                // Change the text of the add-activity button
+                addActivityButton.textContent = 'Update Activity';
+            
+                // Get the index of the clicked activity item
+                var activityIndex = Array.from(activityList.querySelectorAll('.activity-item')).indexOf(element);
+
+                var activityForms = activitiesContainer.querySelectorAll('.activity-form'); 
+                var activityForm = activityForms[activityIndex]
+
+                // Delete the currently visible activity form
+                var visibleActivityForm = activitiesContainer.querySelector('.activity-form:not([style*="display: none"])');
+                if (visibleActivityForm) {
+                    activitiesContainer.removeChild(visibleActivityForm);
+                    // Decrement the total number of forms in the formset
+                    //var totalForms = parseInt(document.querySelector('#id_activity-TOTAL_FORMS').value);
+                    totalForms-=1;
+                    document.querySelector('#id_activity-TOTAL_FORMS').value = totalForms;
+                }
+                
+                // Show the corresponding activity form
+                activityForm.style.display = 'block';
+                //Make update project button disabled
+                submitBtn.disabled = true;
+                
+            }
         });
     }
     function updateActivityFormIDs() {
+        console.log("Updating ID's")
         // Get all activity forms
         var activityForms = activitiesContainer.querySelectorAll('.activity-form');
 
@@ -346,9 +340,12 @@ $(document).ready(function() {
             // Update the form index
             var formIndexRegex = new RegExp(`activity-(\\d+)-`, 'g');
             var formFields = activityForm.querySelectorAll('[name]');
+            var labelFields = activityForm.querySelectorAll('[for]');
             for (var j = 0; j < formFields.length; j++) {
                 var formField = formFields[j];
+                var labelField = labelFields[j];
                 formField.name = formField.name.replace(formIndexRegex, `activity-${i}-`);
+                labelField.htmlFor = labelField.htmlFor.replace(formIndexRegex, `activity-${i}-`);
                 // Update the ID attribute
                 if (formField.id) {
                     formField.id = formField.id.replace(formIndexRegex, `activity-${i}-`);
@@ -363,8 +360,11 @@ $(document).ready(function() {
         }
     }
     function clearFields(form){
+        console.log("Cleaning");
+        console.log(form);
         // Clear the values of each form field
         var fields = form.querySelectorAll('input, select, textarea');
+        console.log(fields);
         fields.forEach(function(field) {
             field.classList.remove("error");
             if (field.type === 'checkbox' || field.type === 'radio') {
@@ -462,6 +462,7 @@ $(document).ready(function() {
                                 if(errors[0]=="Project with this Code1 and Code2 already exists."){
                                     document.querySelector('#id_code1').classList.add('error');
                                     document.querySelector('#id_code2').classList.add('error');
+                                    goToSection(0);
                                 }
                             } else {
                                 // Display field errors

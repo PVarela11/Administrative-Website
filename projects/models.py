@@ -126,10 +126,10 @@ class Activity(models.Model):
     description = models.TextField()
     responsible = models.ForeignKey(User, on_delete=models.CASCADE, related_name='activities_responsible')
     participants = models.ManyToManyField(User, related_name='activities_participant')
-    
+
     class Meta:
          verbose_name = "Activity"
          verbose_name_plural = "Activities"
 
     def __str__(self):
-        return self.activity_name
+        return (str(self.project) + "-" + self.activity_name)

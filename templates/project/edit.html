@@ -186,7 +186,74 @@
             <option value="5" {% if project.client.type_vat == '5' %}selected{% endif %}>Reduzida (6%)</option>
         </select>
     </div>
-</div>
+  </div>
+  <div class="form-section" id="section4" style="display: none;">
+    <div id="activity-list">
+      {% for activity in activities %}
+          <div class="activity-item">
+              <span>{{ activity.activity_name }}</span>
+              <button class="delete-activity">x</button>
+          </div>
+      {% endfor %}
+    </div>
+    {{ form.activity_forms.management_form }}
+    {% for activity in activities %}
+      <div class="activity-form" style="display: none;">
+          <p>
+            <label for="id_activity-{{ forloop.counter0 }}-activity_name">Activity Name</label>
+            <input type="text" id="id_activity-{{ forloop.counter0 }}-activity_name" name="activity-{{ forloop.counter0 }}-activity_name" maxlength="255" value="{{ activity.activity_name }}">
+          </p>
+          <p>
+            <label for="id_activity-{{ forloop.counter0 }}-description">Description</label>
+            <textarea id="id_activity-{{ forloop.counter0 }}-description" cols="40" rows="10" name="activity-{{ forloop.counter0 }}-description">{{ activity.description }}</textarea>
+          </p>
+          <p>
+            <label for="id_activity-{{ forloop.counter0 }}-responsible">Responsible</label>
+            <select id="id_activity-{{ forloop.counter0 }}-responsible" name="activity-{{ forloop.counter0 }}-responsible">
+                {% for user in users %}
+                  <option value="{{ user.pk }}" {% if activity.responsible == user %}selected{% endif %}>{{ user.username }}</option>
+                {% endfor %}
+            </select>
+          </p>
+          <p>
+            <label for="id_activity-{{ forloop.counter0 }}-participants">Participants</label>
+            <select multiple id="id_activity-{{ forloop.counter0 }}-participants" name="activity-{{ forloop.counter0 }}-participants">
+                {% for user in users %}
+                  <option value="{{ user.pk }}" {% if user in activity.participants.all %}selected{% endif %}>{{ user.username }}</option>
+                {% endfor %}
+            </select>
+          </p>
+      </div>
+    {% endfor %}
+    <div class="activity-form">
+      <p>
+          <label for="id_activity-{{ activities|length }}-activity_name">Activity Name</label>
+          <input type="text" class="form-control" id="id_activity-{{ activities|length }}-activity_name" name="activity-{{ activities|length }}-activity_name">
+      </p>
+      <p>
+          <label for="id_activity-{{ activities|length }}-description">Description</label>
+          <textarea class="form-control" id="id_activity-{{ activities|length }}-description" name="activity-{{ activities|length }}-description"></textarea>
+      </p>
+      <p>
+          <label for="id_activity-{{ activities|length }}-responsible">Responsible</label>
+          <select class="form-control" id="id_activity-{{ activities|length }}-responsible" name="activity-{{ activities|length }}-responsible">
+            <option value="" selected="">---------</option>
+            {% for user in users %}
+              <option value="{{ user.pk }}">{{ user.username }}</option>
+            {% endfor %}
+          </select>
+      </p>
+      <p>
+          <label for="id_activity-{{ activities|length }}-participants">Participants</label>
+          <select multiple class="form-control" id="id_activity-{{ activities|length }}-participants" name="activity-{{ activities|length }}-participants">
+            {% for user in users %}
+              <option value="{{ user.pk }}">{{ user.username }}</option>
+            {% endfor %}
+          </select>
+      </p>
+    </div>
+    <button type="button" id="add-activity">Add Activity</button>
+  </div>
 
   <!--Buttons-->
   <button type="button" id="prevBtn" style="display:none;">Previous</button>

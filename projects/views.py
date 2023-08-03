@@ -34,7 +34,11 @@ class ProjectEditView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['users'] = User.objects.exclude(is_superuser=True)
+        context['users'] = User.objects.all()
+        project = self.get_object()
+        activities = project.activities.all()
+        context['activities'] = activities
+        #context['users'] = User.objects.exclude(is_superuser=True)
         #User.objects.exclude(username='admin')
         return context
 
