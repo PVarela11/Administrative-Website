@@ -20,6 +20,7 @@ $(document).ready(function() {
     const modalFormContainer = document.getElementById("modalFormContainer");
     const createUrl = $("#createUrl").attr("data-url");
     let deleteBtns = document.querySelectorAll('a.deleteBtn');
+    let summaryBtns = document.querySelectorAll('a.summaryBtn');
 
     //Listeners
     openModalBtn.addEventListener("click", function() {
@@ -38,6 +39,19 @@ $(document).ready(function() {
             console.log(deleteUrl)
             event.preventDefault();
             fetchFormHtml(deleteUrl);
+        });
+    });
+
+    summaryBtns.forEach(function(summaryBtn) {
+        summaryBtn.addEventListener('click', function(event) {
+            //Prevent triggering tr click event
+            event.preventDefault();
+            event.stopPropagation();
+            let summaryUrl = this.getAttribute('data-url');
+            action = "summary";
+            console.log(summaryUrl)
+            event.preventDefault();
+            fetchFormHtml(summaryUrl);
         });
     });
 
@@ -60,15 +74,13 @@ $(document).ready(function() {
                 initializeForm(); 
             });
     }
-
     function initializeForm(){
-
         const closeModalBtn = document.getElementById("closeModalBtn");
         closeModalBtn.addEventListener("click", function() {
             closeModal();
         });
         submitBtn = document.querySelector("input[type='submit']");
-        if(action!="delete"){
+        if(action!="delete" && action!="summary"){
 
             toggleInputFields();
             

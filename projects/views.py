@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 
 from django.urls import reverse_lazy
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, UpdateView, DeleteView, CreateView, View
+from django.views.generic import ListView, UpdateView, DeleteView, CreateView, View, DetailView
 from django.http import HttpResponseRedirect,JsonResponse
 from django.urls import reverse
 
@@ -24,39 +24,6 @@ class HomePage(LoginRequiredMixin, ListView):
     model = Project
     context_object_name = "projects"
     queryset = Project.objects.all().order_by('-id')[0:10]
-
-class ProjectEditView(LoginRequiredMixin, UpdateView):
-    http_method_names=["get", "post"]
-    model = Project
-    template_name = "project/edit.html"
-    form_class = ProjectEditForm
-    success_url = "/"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['users'] = User.objects.all()
-        project = self.get_object()
-        activities = project.activities.all()
-        context['activities'] = activities
-        #context['users'] = User.objects.exclude(is_superuser=True)
-        #User.objects.exclude(username='admin')
-        return context
-
-    
-    def form_valid(self, form):
-        print("Sucessfull FORM")
-        # Save the data to the database
-        form.save()
-        # Return a success response
-        messages.success(self.request, f'Project "{form.instance.project_name}" was updated successfully!')
-        # Return a success response with the success URL
-        return JsonResponse({'success': True, 'success_url': self.success_url})
-    
-    def form_invalid(self, form):
-        print("Unsuccessfull FORM")
-        # Return the form's errors as a JSON response
-        print(form.errors)
-        return JsonResponse({'errors': form.errors})
 
 class ProjectCreateView(LoginRequiredMixin, CreateView):
     model = Project
@@ -101,21 +68,38 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
         # Return the form's errors as a JSON response
         return JsonResponse({'errors': form.errors})
  
-class GetClientView(View):
-    def get(self, request, client_id):
-        client = get_object_or_404(Client, pk=client_id)
-        data = {
-            'client_name': client.client_name,
-            'tax_id': client.tax_id,
-            'reference': client.reference,
-            'purchase_num': client.purchase_num,
-            'project_value': str(client.project_value),
-            'hour_value': str(client.hour_value),
-            'extra_costs': str(client.extra_costs),
-            'payment_days': client.payment_days,
-            'type_vat': client.type_vat,
-        }
-        return JsonResponse(data)
+class ProjectEditView(LoginRequiredMixin, UpdateView):
+    http_method_names=["get", "post"]
+    model = Project
+    template_name = "project/edit.html"
+    form_class = ProjectEditForm
+    success_url = "/"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['users'] = User.objects.all()
+        project = self.get_object()
+        activities = project.activities.all()
+        context['activities'] = activities
+        #context['users'] = User.objects.exclude(is_superuser=True)
+        #User.objects.exclude(username='admin')
+        return context
+
+    
+    def form_valid(self, form):
+        print("Sucessfull FORM")
+        # Save the data to the database
+        form.save()
+        # Return a success response
+        messages.success(self.request, f'Project "{form.instance.project_name}" was updated successfully!')
+        # Return a success response with the success URL
+        return JsonResponse({'success': True, 'success_url': self.success_url})
+    
+    def form_invalid(self, form):
+        print("Unsuccessfull FORM")
+        # Return the form's errors as a JSON response
+        print(form.errors)
+        return JsonResponse({'errors': form.errors})
 
 class ProjectDeleteView(LoginRequiredMixin, DeleteView):
     template_name = "project/delete.html"
@@ -131,3 +115,23 @@ class ProjectDeleteView(LoginRequiredMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context['delete_url'] = reverse('projects:delete', args=[self.object.pk])
         return context
+
+class ProjectSummaryView(LoginRequiredMixin, DetailView):
+    template_name = 'project/summary.html'
+    model = Project
+
+class GetClientView(View):
+    def get(self, request, client_id):
+        client = get_object_or_404(Client, pk=client_id)
+        data = {
+            'client_name': client.client_name,
+            'tax_id': client.tax_id,
+            'reference': client.reference,
+            'purchase_num': client.purchase_num,
+            'project_value': str(client.project_value),
+            'hour_value': str(client.hour_value),
+            'extra_costs': str(client.extra_costs),
+            'payment_days': client.payment_days,
+            'type_vat': client.type_vat,
+        }
+        return JsonResponse(data)

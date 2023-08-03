@@ -8,6 +8,11 @@ a.deleteBtn:hover {
     transform: scale(1.1);
 }
 
+a.summaryBtn:hover {
+    color: green;
+    transform: scale(1.1);
+}
+
 /*input[type=text] {
     width: 100%;
     padding: 12px 20px;

@@ -1,0 +1,36 @@
+<!-- Modal content -->
+<div class="modal-content">
+    <h3>{{ project.project_name }}</h3>
+    <div class="box">
+        <p>Code 1: {{ project.code1 }}</p>
+        <p>Code 2: {{ project.code2 }}</p>
+        <p>Manager: {{ project.manager }}</p>
+        <p>Description: {{ project.description }}</p>
+        <p>Type: {{ project.get_type_display }}</p>
+        <p>Is External: {{ project.is_external }}</p>
+        <p>Is Research and Development Project: {{ project.get_is_rd_display }}</p>
+        <p>Start Date: {{ project.start_date }}</p>
+        <p>End Date: {{ project.end_date }}</p>
+        <p>Status: {{ project.get_status_display }}</p>
+    </div>
+    <div class="box">
+        <p>Payment: {{ project.get_payment_display }}</p>
+        <p>Visibility: {{ project.get_visibility_display }}</p>
+        <p>Travel Time: {{ project.travel_time }}</p>
+        <p>Long Time: {{ project.long_time }}</p>
+        <p>Extra Time: {{ project.extra_time }}</p>
+        <p>Weekend Time: {{ project.weekend_time }}</p>
+        <p>Night Time: {{ project.night_time }}</p>
+        <p>Client: {{ project.client }}</p>
+    </div>
+    <h4>Activities:</h4>
+    <div class="box">
+        {% for activity in project.activities.all %}
+            <p>Activity Name: {{ activity.activity_name }}</p>
+            <p>Description: {{ activity.description }}</p>
+            <p>Responsible: {{ activity.responsible }}</p>
+            <p>Participants: {% for participant in activity.participants.all %}{{ participant }}, {% endfor %}</p>
+        {% endfor %}
+    </div>
+    <button type="button" id="closeModalBtn">Close</button>
+</div>
