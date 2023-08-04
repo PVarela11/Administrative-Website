@@ -26,10 +26,17 @@
     <h4>Activities:</h4>
     <div class="box">
         {% for activity in project.activities.all %}
-            <p>Activity Name: {{ activity.activity_name }}</p>
-            <p>Description: {{ activity.description }}</p>
-            <p>Responsible: {{ activity.responsible }}</p>
-            <p>Participants: {% for participant in activity.participants.all %}{{ participant }}, {% endfor %}</p>
+            <div class="summary-activity">
+                <div class="summary-activity-header">
+                    <p>Activity Name: {{ activity.activity_name }}</p>
+                    <span class="arrow">&#x25BC;</span>
+                </div>
+                <div class="summary-activity-content">
+                    <p>Description: {{ activity.description }}</p>
+                    <p>Responsible: {{ activity.responsible }}</p>
+                    <p>Participants: {% for participant in activity.participants.all %}{{ participant }}, {% endfor %}</p>
+                </div>
+            </div>
         {% endfor %}
     </div>
     <button type="button" id="closeModalBtn">Close</button>

@@ -241,6 +241,16 @@ $(document).ready(function() {
                 console.log(action + " submit");
                 validateForm(action, form, event);
             });
+        }else if(action == "summary"){
+            const activityHeaders = document.querySelectorAll('.summary-activity-header');
+            activityHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    content.style.display = content.style.display === 'block' ? 'none' : 'block';
+                    const arrow = header.querySelector('.arrow');
+                    arrow.innerHTML = arrow.innerHTML === '&#x25BC;' ? '&#x25B2;' : '&#x25BC;';
+                });
+            });
         }
         $('#id_client').on('change', function() {
             var clientId = $(this).val();
