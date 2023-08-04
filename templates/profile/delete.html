@@ -1,0 +1,6 @@
+<form method="post" action="{{ delete_url }}">
+    {% csrf_token %}
+    <p>Are you sure you want to delete "{{ object }}"?</p>
+    <input type="submit" value="Confirm">
+    <button type="button" id="closeModalBtn">Cancel</button>
+</form>

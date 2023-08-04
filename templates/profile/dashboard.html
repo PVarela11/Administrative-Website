@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}User Profiles Section{% endblock header %}
+{% block button_name %}Add User{% endblock button_name %}
+{% block button_class %}createUserBtn{% endblock button_class %}
+{% block script %} {% static 'js/users.js'%} {% endblock script %}
+{% block body %}
+
+<!--Hidden values to be accessed inside javascript-->
+<input type="hidden" id="createUrl" data-url="{% url 'profiles:create'%}" />
+
+<div class="m-10">
+    <div class="grid grid-flow-col auto-cols-max gap-2">
+    {% for user in users %}
+        <div class="bg-gray-200 font-sans w-fit flex flex-row ">
+            <div class="card w-96 mx-auto bg-white  shadow-xl hover:shadow">
+            <img class="w-32 mx-auto rounded-full border-8 border-white" src="{% static 'img/king.jpg' %}" alt="">
+            <div class="text-center mt-2 text-3xl font-medium">{{user}}</div>
+            <div class="text-center mt-2 font-light text-sm">{{user.email}}</div>
+            <div class="text-center font-normal text-lg">{{user.profile.role}}</div>
+            <div class="px-6 text-center mt-2 font-light text-sm">
+                <p>
+                Front end Developer, avid reader. Love to take a long walk, swim
+                </p>
+            </div>
+            <hr class="mt-8">
+            <div class="flex p-4">
+                <div class="w-1/2 text-center">
+                <span class="font-bold"><a>Edit</a></span> 
+                </div>
+                <div class="w-0 border border-gray-300">
+                
+                </div>
+                <div class="w-1/2 text-center">
+                <span class="font-bold"><a href="{% url 'profiles:delete' user.pk %}">Delete</a></span>
+                </div>
+            </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+{% endblock body %}
