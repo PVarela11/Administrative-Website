@@ -10,7 +10,7 @@
     <script src="https://kit.fontawesome.com/cf74f9215b.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>-->
     <!--Htmx-->
     <script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
 
@@ -27,34 +27,24 @@
     </div>-->
 
 <!-- component https://tailwindcomponents.com/component/responsive-navabr-->
-<style>
-    #menu-toggle:checked + #menu {
-           display: block;
-         }
-
-    img{
-        max-height: 40px;
-    }
-</style>
-
     <div class="antialiased bg-gray-400 drop-shadow-md">
         <header class="lg:px-16 px-6 bg-white flex flex-wrap items-center lg:py-0 py-2">
             <div class="flex-1 flex justify-between items-center">
                 <a href="/">
                     {#TODO CHANGE TO VOV LOGO#}
-                    <img src="{% static 'img/vov-logo.png' %}" alt="My image">
+                    <img src="{% static 'img/vov-logo.png' %}" style="max-height: 40px;" alt="My image">
                 </a>
             </div>
     
-            <label for="menu-toggle" class="pointer-cursor lg:hidden block"><svg class="fill-current text-gray-900" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><title>menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path></svg></label>
-            <input class="hidden" type="checkbox" id="menu-toggle" />
+            <!--<label for="menu-toggle" class="pointer-cursor lg:hidden block"><svg class="fill-current text-gray-900" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><title>menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path></svg></label>
+            <input class="hidden" type="checkbox" id="menu-toggle" />-->
     
             <div class="hidden lg:flex lg:items-center lg:w-auto w-full" id="menu">
                 <nav>
                     <ul class="lg:flex items-center justify-between text-base text-gray-700 pt-4 lg:pt-0">
                         <li><a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400" href="/">Home</a></li>
                         <li><a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400" href="#">Time Report</a></li>
-                        <li><a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400" href="#">Users</a></li>
+                        <li><a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400" href="{% url 'profiles:profiles' %}">Users</a></li>
                         {% if request.user.is_authenticated %}
                             <li><a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400 lg:mb-0 mb-2" href="{% url 'account_logout' %}"><i class="fa-solid fa-right-to-bracket"></i> Logout</a></li>
                         {% else %}
@@ -77,6 +67,41 @@
     </div>
 
     <div class="w-full h-full mt-10">
+        <div class="grid grid-cols-6 gap-4">
+            <div class="col-start-1 col-end-3 ..."><h1 class="text-3xl font-medium">{% block header %}Projects{% endblock header %}</h1></div>
+            <div class="col-span-2 col-start-4">
+                <div class="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden">
+                    <div class="grid place-items-center h-full w-12 text-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+            
+                    <input
+                    class="peer h-full w-full outline-none text-sm text-gray-700 pr-2"
+                    type="text"
+                    id="search"
+                    placeholder="Search something.." /> 
+                </div>
+            </div>
+            <div class="col-end-7"><button type="button" id="{% block button_class %}openModalBtn{% endblock button_class %}"  class="text-sm border border-indigo-500 bg-indigo-500 text-white rounded-md px-4 py-2 transition duration-500 ease select-none hover:bg-indigo-600 focus:outline-none focus:shadow-outline">
+                {% block button_name %}Add project{% endblock button_name%}
+            </button></div>
+        </div>
+        <div id="myModal" class="modal">
+            <div class="modalContent">
+                <div id="modalFormContainer">
+                </div>
+            </div>
+        </div>
+        <!-- Delete Modal -->
+        <div id="deleteModal" class="modal">
+            <!-- Your code to display the delete view goes here -->
+            <div class="modalContent">
+                <div id="modalFormContainer">
+                </div>
+            </div>
+        </div>
         {% block body %}{% endblock body %}
     </div>
 
@@ -85,6 +110,5 @@
 <!--Devolopment only Install Tailwind for production-->
 <script src="https://cdn.tailwindcss.com"></script>
 
-<script src="{% static 'js/main.js' %}"></script>
-
+<script src="{% block script %}{% static 'js/main.js' %}{% endblock script %}"></script>
 </html>
